@@ -1,0 +1,33 @@
+{
+  "name": "pepega-dynamodb",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "build": "tsc",
+    "start": "node ./index.js",
+    "start-dev": "nodemon --config nodemon.json --inspect=0.0.0.0:9229 index.ts",
+    "test": "node --inspect=0.0.0.0:9228 ./node_modules/jest/bin/jest.js --runInBand --forceExit",
+    "test-integration": "node --inspect=0.0.0.0:9228 ./node_modules/jest/bin/jest.js -c jest-integration.config.js --runInBand --forceExit"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Capital-Stonks/pepega-dynamodb.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Capital-Stonks/pepega-dynamodb/issues"
+  },
+  "homepage": "https://github.com/Capital-Stonks/pepega-dynamodb#readme",
+  "dependencies": {
+    "@aws-sdk/client-dynamodb": "^3.41.0",
+    "@aws-sdk/util-dynamodb": "^3.41.0",
+    "aws-sdk": "^2.1028.0",
+    "dotenv": "^10.0.0",
+    "uuid": "^8.3.2"
+  },
+  "devDependencies": {
+    "@aws-sdk/lib-dynamodb": "^3.41.0"
+  }
+}
