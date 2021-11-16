@@ -1,12 +1,11 @@
-enum EnvName {
-    DEV= 'development',
+export enum EnvName {
+    DEV = 'development',
     LOCAL = 'local',
     PRODUCTION = 'production',
 }
 
 export interface IDynamoConfig {
     envName: EnvName,
-    endpoint?: string;
     region: string;
 }
 
@@ -19,12 +18,15 @@ export interface IGetClips {
 export interface IPutClip {
     gameName: string;
     guid: string;
-    aggregatedAtDate?: string;
     username?: string;
-    source: string;
+    source?: string;
+    sourceTitle?: string;
+    sourceDescription: string
     rating?: string;
+    ratedAtDate?: string;
+    usedInVideoAtDate?: string;
+    aggregatedAtDate?: string;
     tags?: string[];
-    s3Key: string;
     duration?: number;
     resolutionHeight?: number;
 }

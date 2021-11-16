@@ -5,7 +5,6 @@ module.exports = {
     moduleFileExtensions: ['js', 'ts', 'tsx', 'json', 'node'],
     coveragePathIgnorePatterns: ['(tests/.*.mock).(ts)$', 'src/api'],
     transformIgnorePatterns: ['<rootDir>/node_modules/'],
-    setupFilesAfterEnv: ['<rootDir>/tests/setup-tests.js'],
     clearMocks: true,
     coverageDirectory: 'coverage',
     testEnvironment: 'node',
