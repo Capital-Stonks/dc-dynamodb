@@ -5,10 +5,10 @@ import {
     DeleteItemCommand, QueryCommand, QueryCommandInput,
 } from '@aws-sdk/client-dynamodb';
 import { marshall, unmarshall } from '@aws-sdk/util-dynamodb';
-import { EnvName, ICustomDateQuery, IDynamoConfig, IGetClip, IPutClip } from './interfaces';
+import { EnvName, ICustomDateFilter, ICustomDateQuery, IDynamoConfig, IGetClip, IPutClip } from './interfaces';
 import { translateConfig } from './utils/translateConfig';
 import { DynamoDBDocumentClient } from '@aws-sdk/lib-dynamodb';
-import { dateEst, getSk, preMarshallPrep } from './utils/dynamoUtils';
+import { columnNameKeyValueMaps, dateEst, getFilterExpression, getSk, preMarshallPrep } from './utils/dynamoUtils';
 
 enum Expression {
     gt = '>',
@@ -155,52 +155,63 @@ export class ClipsRepository extends Repository {
 
     async getByCustomDate(
         gameName: string,
-        {
-            ratedAtDate,
-            usedInVideoAtDate,
-            aggregatedAtDate,
-        }: ICustomDateQuery,
+        filter: ICustomDateFilter,
         expression: Expression,
         usedInVideo = false,
         usedInShort = false,
     ) {
-        const dateQueryExpressions = {
-            FilterExpression: '#ratedAtDate >= :ratedAtDate',
-            ExpressionAttributeNames: {
-                '#ratedAtDate': ratedAtDate,/* ? 'ratedAtDate' : undefined,*/
-                // '#usedInVideoAtDate' : usedInVideoAtDate ? 'usedInVideoAtDate' : undefined,
-                // '#aggregatedAtDate' : aggregatedAtDate ? 'aggregatedAtDate' : undefined,
-            },
-            ExpressionAttributeValues: {
-                ':ratedAtDate': ratedAtDate,
-                // ':usedInVideoAtDate': usedInVideoAtDate,
-                // ':aggregatedAtDate': aggregatedAtDate,
-            },
-        };
-        const { Item } = await this.docClient.send(new QueryCommand({
+        const {
+            ratedAtDate,
+            usedInVideoAtDate,
+            usedInShortAtDate,
+            aggregatedAtDate,
+        } = filter;
+        const {
+            ratedAtDateMap,
+            usedInVideoAtDateMap,
+            usedInShortAtDateMap,
+            aggregatedAtDateMap,
+        } = columnNameKeyValueMaps;
+
+        const FilterExpression = getFilterExpression(filter, expression, usedInVideo, usedInShort);
+        // let  FilterExpression = '#ratedAtDate = :ratedAtDate';
+        // {
+        //     ratedAtDate,
+        //         usedInVideoAtDate,
+        //         usedInShortAtDate,
+        //         aggregatedAtDate,
+        // }
+        // @ts-ignore
+        const res = await this.docClient.send(
+            new QueryCommand({
                 TableName: this.tableName,
                 ScanIndexForward: true,
-                FilterExpression: '#ratedAtDate >= :ratedAtDate',
+                KeyConditionExpression: '#pk = :pk',
+                // FilterExpression,
                 ExpressionAttributeNames: {
-                    '#ratedAtDate': ratedAtDate ? 'ratedAtDate' : undefined,
-                    '#usedInVideoAtDate' : usedInVideoAtDate ? 'usedInVideoAtDate' : undefined,
-                    '#aggregatedAtDate' : aggregatedAtDate ? 'aggregatedAtDate' : undefined,
+                    '#pk': 'pk',
+                    [ratedAtDateMap.Key]: ratedAtDateMap.Name,
+                    [usedInVideoAtDateMap.Key]: usedInVideoAtDateMap.Name,
+                    [aggregatedAtDateMap.Key]: aggregatedAtDateMap.Name,
+                    [aggregatedAtDateMap.Key]: usedInShortAtDateMap.Name,
                 },
-                ExpressionAttributeValues: {
-                    ':ratedAtDate': ratedAtDate,
-                    ':usedInVideoAtDate': usedInVideoAtDate,
-                    ':aggregatedAtDate': aggregatedAtDate,
-                },
-            } as unknown as QueryCommandInput,
-        )).catch((e) => {
+                ExpressionAttributeValues: marshall({
+                    ':pk': gameName,
+                    [ratedAtDateMap.Value]: ratedAtDate,
+                    [usedInShortAtDateMap.Value]: usedInVideoAtDate,
+                    [aggregatedAtDateMap.Value]: aggregatedAtDate,
+                    [usedInShortAtDateMap.Value]: usedInShortAtDate,
+                }),
+            }),
+        ).catch((e) => {
             console.log(e);
             return e;
         });
-        if (!Item) {
+        if (res.Items?.length) {
             console.log('No records returned for');
             return null;
         }
-        return unmarshall(Item);
+        // return unmarshall(Items);
     }
 }
 

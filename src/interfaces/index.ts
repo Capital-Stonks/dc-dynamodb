@@ -32,8 +32,15 @@ export interface IPutClip {
     resolutionHeight?: number | undefined;
 }
 
-export interface ICustomDateQuery {
-    ratedAtDate: string | undefined;
-    usedInVideoAtDate: string | undefined;
-    aggregatedAtDate: string | undefined;
+export interface ICustomDateFilter{
+    ratedAtDate?: string;
+    usedInVideoAtDate?: string;
+    usedInShortAtDate?: string;
+    aggregatedAtDate?: string;
+}
+
+export interface IColumnNameMap {
+    Name: string;
+    Key: string;
+    Value: string;
 }

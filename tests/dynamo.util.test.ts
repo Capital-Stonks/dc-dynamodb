@@ -120,16 +120,15 @@ describe('dynamo.util', () => {
         });
     });
 
-
     describe('date query', () => {
-        test('querys clip by date', async () => {
+        test.only('querys clip by date', async () => {
             const date = moment().tz('America/New_York').format('YYYY-MM-DD HH:mm:ss.SSS');
             const put = await clipsRepo.getByCustomDate(
                 gameName,
                 {
-                    ratedAtDate: 'test',
-                    usedInVideoAtDate: 'test',
-                    aggregatedAtDate: 'test',
+                    ratedAtDate: '2019-09-01',
+                    // usedInVideoAtDate: date,
+                    // aggregatedAtDate: 'test',
                 },
             );
             expect(put).toBeTruthy();
@@ -150,6 +149,8 @@ describe('dynamo.util', () => {
             expect(put).toBeTruthy();
         });
     });
+    // ffmpeg -i 'fb386d57-22dc-48d7-85bf-d2d95d688f4b.mp4' -acodec aac -vcodec libx264 output.mp4
+    // '.\fb386d57-22dc-48d7-85bf-d2d95d688f4b (1).mp4'
 
     // describe('getVideos', () => {
     //     test('returns videos', async () => {
