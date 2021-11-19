@@ -2,22 +2,30 @@ import {
     DynamoDB,
     PutItemCommand,
     GetItemCommand,
-    DescribeTableCommand,
+    DeleteItemCommand, QueryCommand, QueryCommandInput,
 } from '@aws-sdk/client-dynamodb';
 import { marshall, unmarshall } from '@aws-sdk/util-dynamodb';
-import { EnvName, IDynamoConfig, IGetClips, IPutClip } from './interfaces';
+import { EnvName, ICustomDateQuery, IDynamoConfig, IGetClip, IPutClip } from './interfaces';
 import { translateConfig } from './utils/translateConfig';
-
-import { VALORANT, SK_SEPARATOR } from '../constants.js' ;
 import { DynamoDBDocumentClient } from '@aws-sdk/lib-dynamodb';
-import { preMarshallPrep } from './utils/dynamoUtils';
+import { dateEst, getSk, preMarshallPrep } from './utils/dynamoUtils';
+
+enum Expression {
+    gt = '>',
+    gte = '>=',
+    eq = '=',
+    lt = '<',
+    lte = '<=',
+    between = 'BETWEEN'
+}
 
 class Repository {
     public docClient;
     public client;
     protected envName;
+    public Expression = Expression;
 
-    constructor({ region, envName = EnvName.DEV }: IDynamoConfig) {
+    constructor({ region = 'us-east-2', envName = EnvName.DEV }: IDynamoConfig) {
         this.client = new DynamoDB({ region });
         this.docClient = DynamoDBDocumentClient.from(this.client, translateConfig);
         this.envName = envName;
@@ -25,7 +33,14 @@ class Repository {
 }
 
 export class ClipsRepository extends Repository {
-    async putClip(putObject: IPutClip) {
+    public tableName;
+
+    constructor({ region = 'us-east-2', envName = EnvName.DEV }) {
+        super({ region, envName: EnvName.DEV });
+        this.tableName = `${envName}-clips`;
+    }
+
+    async create(createObject: IPutClip) {
         const {
             gameName,
             guid,
@@ -39,11 +54,12 @@ export class ClipsRepository extends Repository {
             rating,
             ratedAtDate,
             usedInVideoAtDate,
+            usedInShortAtDate,
             aggregatedAtDate,
-        } = putObject;
+        } = createObject;
         const filteredPut = preMarshallPrep({
             pk: gameName,
-            sk: `${gameName}${SK_SEPARATOR}${guid}`,
+            sk: getSk(gameName, guid),
             guid,
             aggregatedAtDate,
             username,
@@ -56,29 +72,136 @@ export class ClipsRepository extends Repository {
             resolutionHeight,
             ratedAtDate,
             usedInVideoAtDate,
-            createdAt: new Date().toString(),
-            updatedAt: new Date().toString(),
+            usedInShortAtDate,
+            createdAt: dateEst(),
         });
-        const put = await this.docClient.send(new PutItemCommand({
-            TableName: `${this.envName}-clips`,
+
+        return this.docClient.send(new PutItemCommand({
+            TableName: this.tableName,
             Item: marshall(filteredPut),
         })).catch((e) => {
             console.log(e);
             return e;
         });
-        return put;
     }
 
-    // async getClips({ gameName, rating, guid }: IGetClips) {
-    //     const get = await this.docClient.send(new GetItemCommand({
-    //         TableName: `clips-${this.envName}`,
-    //         Key: {
-    //             pk: { S: VALORANT },
-    //             sk: { S: `${VALORANT}${SK_SEPARATOR}9${SK_SEPARATOR}v4Guid1324111` },
-    //         },
-    //     }));
-    //     // console.log(unmarshall(getResult.Item));
-    // }
+    async put(putObject: IPutClip) {
+        const {
+            gameName,
+            guid,
+            username,
+            source,
+            sourceTitle,
+            sourceDescription,
+            tags,
+            duration,
+            resolutionHeight,
+            rating,
+            ratedAtDate,
+            usedInVideoAtDate,
+            usedInShortAtDate,
+            aggregatedAtDate,
+        } = putObject;
+        const filteredPut = preMarshallPrep({
+            pk: gameName,
+            sk: getSk(gameName, guid),
+            guid,
+            username,
+            source,
+            sourceTitle,
+            sourceDescription,
+            rating,
+            tags,
+            duration,
+            resolutionHeight,
+            aggregatedAtDate,
+            ratedAtDate,
+            usedInVideoAtDate,
+            usedInShortAtDate,
+            updatedAt: dateEst(),
+        });
+
+        return this.docClient.send(new PutItemCommand({
+            TableName: this.tableName,
+            Item: marshall(filteredPut),
+        })).catch((e) => {
+            console.log(e);
+            return e;
+        });
+    }
+
+    async delete(gameName, guid) {
+        return this.docClient.send(new DeleteItemCommand({
+            TableName: this.tableName,
+            Key: marshall({ pk: gameName, sk: getSk(gameName, guid) }),
+        }));
+    }
+
+
+    async get(gameName, guid) {
+        const { Item } = await this.docClient.send(new GetItemCommand({
+            TableName: this.tableName,
+            Key: marshall({ pk: gameName, sk: getSk(gameName, guid) }),
+        })).catch((e) => {
+            console.log(e);
+            return e;
+        });
+        if (!Item) {
+            console.log('No records returned for', getSk(gameName, guid));
+            return null;
+        }
+        return unmarshall(Item);
+    }
+
+    async getByCustomDate(
+        gameName: string,
+        {
+            ratedAtDate,
+            usedInVideoAtDate,
+            aggregatedAtDate,
+        }: ICustomDateQuery,
+        expression: Expression,
+        usedInVideo = false,
+        usedInShort = false,
+    ) {
+        const dateQueryExpressions = {
+            FilterExpression: '#ratedAtDate >= :ratedAtDate',
+            ExpressionAttributeNames: {
+                '#ratedAtDate': ratedAtDate,/* ? 'ratedAtDate' : undefined,*/
+                // '#usedInVideoAtDate' : usedInVideoAtDate ? 'usedInVideoAtDate' : undefined,
+                // '#aggregatedAtDate' : aggregatedAtDate ? 'aggregatedAtDate' : undefined,
+            },
+            ExpressionAttributeValues: {
+                ':ratedAtDate': ratedAtDate,
+                // ':usedInVideoAtDate': usedInVideoAtDate,
+                // ':aggregatedAtDate': aggregatedAtDate,
+            },
+        };
+        const { Item } = await this.docClient.send(new QueryCommand({
+                TableName: this.tableName,
+                ScanIndexForward: true,
+                FilterExpression: '#ratedAtDate >= :ratedAtDate',
+                ExpressionAttributeNames: {
+                    '#ratedAtDate': ratedAtDate ? 'ratedAtDate' : undefined,
+                    '#usedInVideoAtDate' : usedInVideoAtDate ? 'usedInVideoAtDate' : undefined,
+                    '#aggregatedAtDate' : aggregatedAtDate ? 'aggregatedAtDate' : undefined,
+                },
+                ExpressionAttributeValues: {
+                    ':ratedAtDate': ratedAtDate,
+                    ':usedInVideoAtDate': usedInVideoAtDate,
+                    ':aggregatedAtDate': aggregatedAtDate,
+                },
+            } as unknown as QueryCommandInput,
+        )).catch((e) => {
+            console.log(e);
+            return e;
+        });
+        if (!Item) {
+            console.log('No records returned for');
+            return null;
+        }
+        return unmarshall(Item);
+    }
 }
 
 export class TagsRepository extends Repository {
@@ -88,38 +211,4 @@ export class TagsRepository extends Repository {
             Item: marshall({ pk, sk }),
         }));
     };
-};
-
-//
-//
-// (async () => {
-//     try {
-//         const table = await db.send(new DescribeTableCommand({TableName: `clips-${ENVIRONMENT_NAME}`}));
-//         console.log(table);
-//         const results = await db.send(new PutItemCommand({
-//             TableName: `clips-${ENVIRONMENT_NAME}`,
-//             Item: {
-//                 pk: {S: VALORANT},
-//                 sk: {S: `${VALORANT}${SK_SEPARATOR}9${SK_SEPARATOR}v4Guid1324111`},
-//                 aggregatedAtDate: {S: 'unique'},
-//                 username: {S: 'Kyle Is A Boomer'},
-//                 source: {S: 'twitter'},
-//                 rating: {N: '9'},
-//                 tags: {SS: ['yoked', 'autistic', 'boomer']},
-//                 s3key: {S: 'v4Guid1324'},
-//                 createdAt: {S: new Date().toString()},
-//                 updatedAt: {S: new Date().toString()},
-//             },
-//         }));
-//         const getResult = await db.send(new GetItemCommand({
-//             TableName: `clips-${ENVIRONMENT_NAME}`,
-//             Key: {
-//                 pk: {S: VALORANT},
-//                 sk: {S: `${VALORANT}${SK_SEPARATOR}9${SK_SEPARATOR}v4Guid1324111`},
-//             },
-//         }));
-//         // console.log(unmarshall(getResult.Item));
-//     } catch (e) {
-//         console.log(e);
-//     }
-// })();
+}

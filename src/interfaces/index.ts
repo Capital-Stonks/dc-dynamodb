@@ -9,24 +9,31 @@ export interface IDynamoConfig {
     region: string;
 }
 
-export interface IGetClips {
+export interface IGetClip {
     gameName: string,
-    rating?: number,
-    guid?: string,
+    guid: string,
 }
 
 export interface IPutClip {
     gameName: string;
     guid: string;
-    username?: string;
-    source?: string;
-    sourceTitle?: string;
-    sourceDescription: string
-    rating?: string;
-    ratedAtDate?: string;
-    usedInVideoAtDate?: string;
-    aggregatedAtDate?: string;
-    tags?: string[];
-    duration?: number;
-    resolutionHeight?: number;
+    s3Path: string;
+    username?: string | undefined;
+    source?: string | undefined;
+    sourceTitle?: string | undefined;
+    sourceDescription?: string | undefined;
+    rating?: string | undefined;
+    ratedAtDate?: string | undefined;
+    usedInVideoAtDate?: string | undefined;
+    usedInShortAtDate?: string | undefined;
+    aggregatedAtDate?: string | undefined;
+    tags?: string[] | undefined;
+    duration?: number | undefined;
+    resolutionHeight?: number | undefined;
+}
+
+export interface ICustomDateQuery {
+    ratedAtDate: string | undefined;
+    usedInVideoAtDate: string | undefined;
+    aggregatedAtDate: string | undefined;
 }
