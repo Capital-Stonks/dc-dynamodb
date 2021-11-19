@@ -36,15 +36,15 @@ export const columnNameKeyValueMaps: { [key: string]: IColumnNameMap } = Object.
     },
 });
 
-export const getFilterExpression = (filter: ICustomDateFilter, expression, usedInVideo, usedInShort) => {
+export const getFilterExpression = (filter: ICustomDateFilter, expression, includeUsedInVideo, includeUsedInShort) => {
     const columnName = Object.keys(filter)?.[0];
     const map = columnNameKeyValueMaps[columnName];
     let filterExpression = `${map.Key} ${expression} ${map.Value} `;
-    if (!usedInVideo){
-        // filterExpression += 'AND attribute_not_exists(usedInVideo) ';
+    if (!includeUsedInVideo){
+        filterExpression += 'AND attribute_not_exists(usedInVideoAtDate) ';
     }
-    if (!usedInShort){
-        // filterExpression += 'AND attribute_not_exists(usedInShort) ';
+    if (!includeUsedInShort){
+        filterExpression += 'AND attribute_not_exists(usedInShortAtDate) ';
     }
     return filterExpression;
 }
@@ -64,11 +64,11 @@ export const getExpressionAttributeValues = (gameName, filter: ICustomDateFilter
 
     return {
         ':pk': gameName,
-        [map.Value]: map.Name,
+        [map.Value]: filter[columnName],
     };
 }
 
-export const ExpressionMapper = (gameName, filter: ICustomDateFilter, expression, usedInVideo, usedInShort) => ({
+export const DateExpressionMapper = (gameName, filter: ICustomDateFilter, expression, usedInVideo, usedInShort) => ({
     FilterExpression: getFilterExpression(filter, expression, usedInVideo, usedInShort),
     ExpressionAttributeNames: getExpressionAttributeNames(filter),
     ExpressionAttributeValues: marshall(getExpressionAttributeValues(gameName, filter)),

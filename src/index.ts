@@ -11,7 +11,7 @@ import { DynamoDBDocumentClient } from '@aws-sdk/lib-dynamodb';
 import {
     columnNameKeyValueMaps,
     dateEst,
-    ExpressionMapper,
+    DateExpressionMapper,
     getFilterExpression,
     getSk,
     preMarshallPrep,
@@ -73,10 +73,10 @@ export class ClipsRepository extends Repository {
             source,
             sourceTitle,
             sourceDescription,
-            rating,
             tags,
             duration,
             resolutionHeight,
+            rating,
             ratedAtDate,
             usedInVideoAtDate,
             usedInShortAtDate,
@@ -164,15 +164,16 @@ export class ClipsRepository extends Repository {
         gameName: string,
         filter: ICustomDateFilter,
         expression: Expression,
-        usedInVideo = false,
-        usedInShort = false,
+        minimumRating = 6, //todo
+        includeUsedInVideo = false,
+        includeUsedInShort = false,
     ) {
 
         const {
             FilterExpression,
             ExpressionAttributeNames,
             ExpressionAttributeValues,
-        } = ExpressionMapper(gameName, filter, expression, usedInVideo, usedInShort);
+        } = DateExpressionMapper(gameName, filter, expression, includeUsedInVideo, includeUsedInShort);
 
 
         const res = await this.docClient.send(

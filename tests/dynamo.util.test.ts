@@ -126,11 +126,12 @@ describe('dynamo.util', () => {
             const put = await clipsRepo.getByCustomDate(
                 gameName,
                 {
-                    ratedAtDate: '2019-09-01',
-                    // usedInVideoAtDate: date,
-                    // aggregatedAtDate: 'test',
+                    // ratedAtDate: '2019-09-01',
+                    // usedInVideoAtDate: '2019-01-01',
+                    aggregatedAtDate: '2020-01-01',
                 },
-                clipsRepo.Expression.eq
+                clipsRepo.Expression.eq,
+                true
             );
             expect(put).toBeTruthy();
             const del = await clipsRepo.delete(
