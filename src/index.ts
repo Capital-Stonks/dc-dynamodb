@@ -5,10 +5,17 @@ import {
     DeleteItemCommand, QueryCommand, QueryCommandInput,
 } from '@aws-sdk/client-dynamodb';
 import { marshall, unmarshall } from '@aws-sdk/util-dynamodb';
-import { EnvName, ICustomDateFilter, ICustomDateQuery, IDynamoConfig, IGetClip, IPutClip } from './interfaces';
+import { EnvName, ICustomDateFilter, IDynamoConfig, IGetClip, IPutClip } from './interfaces';
 import { translateConfig } from './utils/translateConfig';
 import { DynamoDBDocumentClient } from '@aws-sdk/lib-dynamodb';
-import { columnNameKeyValueMaps, dateEst, getFilterExpression, getSk, preMarshallPrep } from './utils/dynamoUtils';
+import {
+    columnNameKeyValueMaps,
+    dateEst,
+    ExpressionMapper,
+    getFilterExpression,
+    getSk,
+    preMarshallPrep,
+} from './utils/dynamoUtils';
 
 enum Expression {
     gt = '>',
@@ -160,48 +167,22 @@ export class ClipsRepository extends Repository {
         usedInVideo = false,
         usedInShort = false,
     ) {
-        const {
-            ratedAtDate,
-            usedInVideoAtDate,
-            usedInShortAtDate,
-            aggregatedAtDate,
-        } = filter;
-        const {
-            ratedAtDateMap,
-            usedInVideoAtDateMap,
-            usedInShortAtDateMap,
-            aggregatedAtDateMap,
-        } = columnNameKeyValueMaps;
 
-        const FilterExpression = getFilterExpression(filter, expression, usedInVideo, usedInShort);
-        // let  FilterExpression = '#ratedAtDate = :ratedAtDate';
-        // {
-        //     ratedAtDate,
-        //         usedInVideoAtDate,
-        //         usedInShortAtDate,
-        //         aggregatedAtDate,
-        // }
-        // @ts-ignore
+        const {
+            FilterExpression,
+            ExpressionAttributeNames,
+            ExpressionAttributeValues,
+        } = ExpressionMapper(gameName, filter, expression, usedInVideo, usedInShort);
+
+
         const res = await this.docClient.send(
             new QueryCommand({
                 TableName: this.tableName,
                 ScanIndexForward: true,
                 KeyConditionExpression: '#pk = :pk',
-                // FilterExpression,
-                ExpressionAttributeNames: {
-                    '#pk': 'pk',
-                    [ratedAtDateMap.Key]: ratedAtDateMap.Name,
-                    [usedInVideoAtDateMap.Key]: usedInVideoAtDateMap.Name,
-                    [aggregatedAtDateMap.Key]: aggregatedAtDateMap.Name,
-                    [aggregatedAtDateMap.Key]: usedInShortAtDateMap.Name,
-                },
-                ExpressionAttributeValues: marshall({
-                    ':pk': gameName,
-                    [ratedAtDateMap.Value]: ratedAtDate,
-                    [usedInShortAtDateMap.Value]: usedInVideoAtDate,
-                    [aggregatedAtDateMap.Value]: aggregatedAtDate,
-                    [usedInShortAtDateMap.Value]: usedInShortAtDate,
-                }),
+                FilterExpression,
+                ExpressionAttributeNames,
+                ExpressionAttributeValues,
             }),
         ).catch((e) => {
             console.log(e);
@@ -223,3 +204,26 @@ export class TagsRepository extends Repository {
         }));
     };
 }
+
+//
+//
+// {
+//     TableName: this.tableName,
+//         ScanIndexForward: true,
+//     KeyConditionExpression: '#pk = :pk',
+//     FilterExpression,
+//     ExpressionAttributeNames: {
+//     '#pk': 'pk',
+//         [ratedAtDateMap.Key]: ratedAtDateMap.Name,
+//         [usedInVideoAtDateMap.Key]: usedInVideoAtDateMap.Name,
+//         [aggregatedAtDateMap.Key]: aggregatedAtDateMap.Name,
+//         [aggregatedAtDateMap.Key]: usedInShortAtDateMap.Name,
+// },
+//     ExpressionAttributeValues: marshall({
+//         ':pk': gameName,
+//         [ratedAtDateMap.Value]: ratedAtDate,
+//         // [usedInShortAtDateMap.Value]: usedInVideoAtDate,
+//         // [aggregatedAtDateMap.Value]: aggregatedAtDate,
+//         // [usedInShortAtDateMap.Value]: usedInShortAtDate,
+//     }),
+// }

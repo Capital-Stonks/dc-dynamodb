@@ -1,6 +1,7 @@
 import { SK_SEPARATOR } from '../../constants';
 import momentTz from 'moment-timezone';
 import { IColumnNameMap, ICustomDateFilter } from '../interfaces';
+import { marshall } from '@aws-sdk/util-dynamodb';
 
 const moment = momentTz;
 
@@ -13,22 +14,22 @@ export const getSk = (gameName, guid) => `${gameName}${SK_SEPARATOR}${guid}`;
 export const dateEst = () => moment().tz('America/New_York').format('YYYY-MM-DD HH:mm:ss.SSS');
 
 export const columnNameKeyValueMaps: { [key: string]: IColumnNameMap } = Object.freeze({
-    ratedAtDateMap: {
+    ratedAtDate: {
         Name: 'ratedAtDate',
         Key: '#ratedAtDate',
         Value: ':ratedAtDate',
     },
-    usedInVideoAtDateMap: {
+    usedInVideoAtDate: {
         Name: 'usedInVideoAtDate',
-        Key: '#ratedAtDate',
-        Value: ':ratedAtDate',
+        Key: '#usedInVideoAtDate',
+        Value: ':usedInVideoAtDate',
     },
-    aggregatedAtDateMap: {
+    aggregatedAtDate: {
         Name: 'aggregatedAtDate',
         Key: '#aggregatedAtDate',
         Value: ':aggregatedAtDate',
     },
-    usedInShortAtDateMap: {
+    usedInShortAtDate: {
         Name: 'usedInShortAtDate',
         Key: '#usedInShortAtDate',
         Value: ':usedInShortAtDate',
@@ -36,8 +37,40 @@ export const columnNameKeyValueMaps: { [key: string]: IColumnNameMap } = Object.
 });
 
 export const getFilterExpression = (filter: ICustomDateFilter, expression, usedInVideo, usedInShort) => {
-    Object.entries(filter).filter(kv => {
-        console.log(kv);
-    })
+    const columnName = Object.keys(filter)?.[0];
+    const map = columnNameKeyValueMaps[columnName];
+    let filterExpression = `${map.Key} ${expression} ${map.Value} `;
+    if (!usedInVideo){
+        // filterExpression += 'AND attribute_not_exists(usedInVideo) ';
+    }
+    if (!usedInShort){
+        // filterExpression += 'AND attribute_not_exists(usedInShort) ';
+    }
+    return filterExpression;
 }
+
+export const getExpressionAttributeNames = (filter: ICustomDateFilter) => {
+    const columnName = Object.keys(filter)?.[0];
+    const map = columnNameKeyValueMaps[columnName];
+    return {
+        '#pk': 'pk',
+        [map.Key]: map.Name,
+    };
+}
+
+export const getExpressionAttributeValues = (gameName, filter: ICustomDateFilter) => {
+    const columnName = Object.keys(filter)?.[0];
+    const map = columnNameKeyValueMaps[columnName];
+
+    return {
+        ':pk': gameName,
+        [map.Value]: map.Name,
+    };
+}
+
+export const ExpressionMapper = (gameName, filter: ICustomDateFilter, expression, usedInVideo, usedInShort) => ({
+    FilterExpression: getFilterExpression(filter, expression, usedInVideo, usedInShort),
+    ExpressionAttributeNames: getExpressionAttributeNames(filter),
+    ExpressionAttributeValues: marshall(getExpressionAttributeValues(gameName, filter)),
+})
 

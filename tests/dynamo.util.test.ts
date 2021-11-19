@@ -130,6 +130,7 @@ describe('dynamo.util', () => {
                     // usedInVideoAtDate: date,
                     // aggregatedAtDate: 'test',
                 },
+                clipsRepo.Expression.eq
             );
             expect(put).toBeTruthy();
             const del = await clipsRepo.delete(
