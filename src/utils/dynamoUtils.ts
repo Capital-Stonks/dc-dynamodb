@@ -2,6 +2,7 @@ import { SK_SEPARATOR } from '../../constants';
 import momentTz from 'moment-timezone';
 import { IColumnNameMap, ICustomDateFilter } from '../interfaces';
 import { marshall } from '@aws-sdk/util-dynamodb';
+import { ClipsRepository } from '../index';
 
 const moment = momentTz;
 
@@ -15,7 +16,7 @@ export const dateEst = () => moment().tz('America/New_York').format('YYYY-MM-DD 
 
 export const columnNameKeyValueMaps: { [key: string]: IColumnNameMap } = Object.freeze({
     ratedAtDate: {
-        Name: 'ratedAtDate',
+        Name: `ratedAtDate`,
         Key: '#ratedAtDate',
         Value: ':ratedAtDate',
     },
@@ -34,43 +35,79 @@ export const columnNameKeyValueMaps: { [key: string]: IColumnNameMap } = Object.
         Key: '#usedInShortAtDate',
         Value: ':usedInShortAtDate',
     },
+    minimumRating: {
+        Name: 'rating',
+        Key: '#rating',
+        Value: ':rating',
+    },
 });
 
-export const getFilterExpression = (filter: ICustomDateFilter, expression, includeUsedInVideo, includeUsedInShort) => {
+export const getFilterExpression = (
+    filter: ICustomDateFilter,
+    expression,
+    minimumRating,
+    includeUsedInVideo,
+    includeUsedInShort) => {
     const columnName = Object.keys(filter)?.[0];
     const map = columnNameKeyValueMaps[columnName];
+    const ratingMap = columnNameKeyValueMaps['minimumRating'];
     let filterExpression = `${map.Key} ${expression} ${map.Value} `;
-    if (!includeUsedInVideo){
+
+    if (minimumRating) {
+        filterExpression += `AND ${ratingMap.Key} >= ${ratingMap.Value} `;
+    }
+    if (!includeUsedInVideo) {
         filterExpression += 'AND attribute_not_exists(usedInVideoAtDate) ';
     }
-    if (!includeUsedInShort){
+    if (!includeUsedInShort) {
         filterExpression += 'AND attribute_not_exists(usedInShortAtDate) ';
     }
-    return filterExpression;
-}
 
-export const getExpressionAttributeNames = (filter: ICustomDateFilter) => {
+    return filterExpression;
+};
+
+export const getExpressionAttributeNames = (filter: ICustomDateFilter, minimumRating) => {
     const columnName = Object.keys(filter)?.[0];
     const map = columnNameKeyValueMaps[columnName];
+    const ratingMap = columnNameKeyValueMaps['minimumRating'];
+    // todo on hold until gsi is fully solved
+    // let ExpressionAttributeNames;
+    // if (!map.Name === ClipsRepository.gsi){
+    //     KeyConditionExpression += ` AND ${map.Name} ${expression} ${map.Value}`;
+    // }
     return {
         '#pk': 'pk',
         [map.Key]: map.Name,
+        [ratingMap.Key]: ratingMap.Name,
     };
-}
+};
 
-export const getExpressionAttributeValues = (gameName, filter: ICustomDateFilter) => {
+export const getExpressionAttributeValues = (gameName, filter: ICustomDateFilter, minimumRating) => {
     const columnName = Object.keys(filter)?.[0];
     const map = columnNameKeyValueMaps[columnName];
-
+    const ratingMap = columnNameKeyValueMaps['minimumRating'];
     return {
         ':pk': gameName,
         [map.Value]: filter[columnName],
+        [ratingMap.Value]: minimumRating,
     };
-}
+};
 
-export const DateExpressionMapper = (gameName, filter: ICustomDateFilter, expression, usedInVideo, usedInShort) => ({
-    FilterExpression: getFilterExpression(filter, expression, usedInVideo, usedInShort),
-    ExpressionAttributeNames: getExpressionAttributeNames(filter),
-    ExpressionAttributeValues: marshall(getExpressionAttributeValues(gameName, filter)),
-})
+export const getKeyConditionExpression = (gameName, filter, expression) => {
+    // todo on hold until gsi is fully solved
+    // const columnName = Object.keys(filter)?.[0];
+    // const map = columnNameKeyValueMaps[columnName];
+    // let KeyConditionExpression = `#pk = :pk AND begins_with(sk, ${gameName})`;
+    // if (map.Name === ClipsRepository.gsi){
+    //     KeyConditionExpression += ` AND ${map.Key} ${expression} ${map.Value}`;
+    // }
+    return '#pk = :pk';
+};
+
+export const DateExpressionMapper = (gameName, filter: ICustomDateFilter, expression, minimumRating, usedInVideo, usedInShort) => ({
+    FilterExpression: getFilterExpression(filter, expression, minimumRating, usedInVideo, usedInShort),
+    ExpressionAttributeNames: getExpressionAttributeNames(filter, minimumRating),
+    ExpressionAttributeValues: marshall(getExpressionAttributeValues(gameName, filter, minimumRating)),
+    KeyConditionExpression: getKeyConditionExpression(gameName, filter, expression),
+});
 

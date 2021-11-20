@@ -18,21 +18,21 @@ export interface IPutClip {
     gameName: string;
     guid: string;
     s3Path: string;
-    username?: string | undefined;
-    source?: string | undefined;
-    sourceTitle?: string | undefined;
-    sourceDescription?: string | undefined;
-    rating?: string | undefined;
-    ratedAtDate?: string | undefined;
-    usedInVideoAtDate?: string | undefined;
-    usedInShortAtDate?: string | undefined;
-    aggregatedAtDate?: string | undefined;
-    tags?: string[] | undefined;
-    duration?: number | undefined;
-    resolutionHeight?: number | undefined;
+    username?: string;
+    source?: string;
+    sourceTitle?: string;
+    sourceDescription?: string;
+    rating?: number;
+    ratedAtDate?: string;
+    usedInVideoAtDate?: string;
+    usedInShortAtDate?: string;
+    aggregatedAtDate?: string;
+    tags?: string[];
+    duration?: number;
+    resolutionHeight?: number;
 }
 
-export interface ICustomDateFilter{
+export interface ICustomDateFilter {
     ratedAtDate?: string;
     usedInVideoAtDate?: string;
     usedInShortAtDate?: string;
@@ -43,4 +43,14 @@ export interface IColumnNameMap {
     Name: string;
     Key: string;
     Value: string;
+}
+
+export interface IPutTags {
+    pk: string;
+    sk: string;
+    tags: string[];
+}
+export interface IGetTags {
+    gameName: string;
+    sk: string;
 }

@@ -24,25 +24,25 @@ export const clipsTableSchema = (envName) => ({
             AttributeType: 'S',
         },
     ],
-    GlobalSecondaryIndexes: [
-        {
-            IndexName: 'ratedAtDate-index',
-            Projection: {
-                ProjectionType: 'ALL',
-            },
-            KeySchema: [
-                {
-                    AttributeName: 'ratedAtDate',
-                    KeyType: 'HASH',
-                },
-            ],
-            BillingMode: 'PAY_PER_REQUEST',
-            ProvisionedThroughput: {
-                ReadCapacityUnits: 1,
-                WriteCapacityUnits: 1,
-            },
-        },
-    ],
+    // GlobalSecondaryIndexes: [ todo on hold until gsi is fully solved
+    //     {
+    //         IndexName: 'ratedAtDate-index',
+    //         Projection: {
+    //             ProjectionType: 'ALL',
+    //         },
+    //         KeySchema: [
+    //             {
+    //                 AttributeName: 'ratedAtDate',
+    //                 KeyType: 'HASH',
+    //             },
+    //         ],
+    //         BillingMode: 'PAY_PER_REQUEST',
+    //         ProvisionedThroughput: {
+    //             ReadCapacityUnits: 1,
+    //             WriteCapacityUnits: 1,
+    //         },
+    //     },
+    // ],
     ProvisionedThroughput: {
         ReadCapacityUnits: 30,
         WriteCapacityUnits: 1,

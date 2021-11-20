@@ -6,6 +6,8 @@ import momentTz from 'moment-timezone';
 
 const moment = momentTz;
 
+jest.setTimeout(1000000);
+
 describe('dynamo.util', () => {
     let clipsRepo;
     let tagsRepo;
@@ -36,7 +38,7 @@ describe('dynamo.util', () => {
                 tags: ['wow', 'ace'],
                 duration: 190,
                 resolutionHeight: 69,
-                rating: date,
+                rating: 9,
                 ratedAtDate: date,
                 usedInVideoAtDate: date,
                 usedInShortAtDate: date,
@@ -58,7 +60,7 @@ describe('dynamo.util', () => {
                 tags: ['wow', 'ace'],
                 duration: 999999,
                 resolutionHeight: 69,
-                rating: date,
+                rating: 9,
                 ratedAtDate: date,
                 usedInVideoAtDate: date,
                 usedInShortAtDate: date,
@@ -80,7 +82,7 @@ describe('dynamo.util', () => {
                 tags: ['wow', 'ace'],
                 duration: 12,
                 resolutionHeight: 69,
-                rating: date,
+                rating: 9,
                 ratedAtDate: date,
                 usedInVideoAtDate: date,
                 aggregatedAtDate: date,
@@ -106,7 +108,7 @@ describe('dynamo.util', () => {
                 tags: ['wow', 'ace'],
                 duration: 190,
                 resolutionHeight: 69,
-                rating: date,
+                rating: 9,
                 ratedAtDate: date,
                 usedInVideoAtDate: date,
                 aggregatedAtDate: date,
@@ -121,19 +123,21 @@ describe('dynamo.util', () => {
     });
 
     describe('date query', () => {
-        test.only('querys clip by date', async () => {
+        test('querys clip by date', async () => {
             const date = moment().tz('America/New_York').format('YYYY-MM-DD HH:mm:ss.SSS');
-            const put = await clipsRepo.getByCustomDate(
+            const query = await clipsRepo.getByCustomDate(
                 gameName,
                 {
-                    // ratedAtDate: '2019-09-01',
+                    ratedAtDate: '2021-01-01',
                     // usedInVideoAtDate: '2019-01-01',
-                    aggregatedAtDate: '2020-01-01',
+                    // aggregatedAtDate: '2020-01-01',
                 },
                 clipsRepo.Expression.eq,
-                true
+                '3',
+                false,
+                false,
             );
-            expect(put).toBeTruthy();
+            expect(query).toBeTruthy();
             const del = await clipsRepo.delete(
                 gameName,
                 guid,
@@ -141,14 +145,22 @@ describe('dynamo.util', () => {
             expect(del).toBeTruthy();
         });
     });
-    describe('fuck', () => {
-        test('creates fuck and returns cukj', async () => {
-            console.log('fuck');
+    describe('tags repo', () => {
+        test.only('puts tags', async () => {
             const put = await tagsRepo.put({
                 pk: 'VALORANT',
-                sk: `$VALORANT#TEST123123`,
+                sk: `VALORANT#`,
+                tags: ['test', 'tags'],
             });
-            expect(put).toBeTruthy();
+            expect(put).toBe(true);
+        });
+
+        test.only('gets tags', async () => {
+            const put = await tagsRepo.get({
+                pk: 'VALORANT',
+                sk: `VALORANT#`,
+            });
+            expect(put).toBe(true);
         });
     });
     // ffmpeg -i 'fb386d57-22dc-48d7-85bf-d2d95d688f4b.mp4' -acodec aac -vcodec libx264 output.mp4

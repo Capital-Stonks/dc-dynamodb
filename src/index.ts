@@ -2,22 +2,22 @@ import {
     DynamoDB,
     PutItemCommand,
     GetItemCommand,
-    DeleteItemCommand, QueryCommand, QueryCommandInput,
+    DeleteItemCommand,
+    QueryCommand,
 } from '@aws-sdk/client-dynamodb';
 import { marshall, unmarshall } from '@aws-sdk/util-dynamodb';
-import { EnvName, ICustomDateFilter, IDynamoConfig, IGetClip, IPutClip } from './interfaces';
+import { EnvName, ICustomDateFilter, IDynamoConfig, IGetTags, IPutClip, IPutTags } from './interfaces';
 import { translateConfig } from './utils/translateConfig';
 import { DynamoDBDocumentClient } from '@aws-sdk/lib-dynamodb';
+import { SK_SEPARATOR } from '../constants';
 import {
-    columnNameKeyValueMaps,
     dateEst,
     DateExpressionMapper,
-    getFilterExpression,
     getSk,
     preMarshallPrep,
 } from './utils/dynamoUtils';
 
-enum Expression {
+enum Comparator {
     gt = '>',
     gte = '>=',
     eq = '=',
@@ -30,7 +30,7 @@ class Repository {
     public docClient;
     public client;
     protected envName;
-    public Expression = Expression;
+    public Expression = Comparator;
 
     constructor({ region = 'us-east-2', envName = EnvName.DEV }: IDynamoConfig) {
         this.client = new DynamoDB({ region });
@@ -41,6 +41,7 @@ class Repository {
 
 export class ClipsRepository extends Repository {
     public tableName;
+    public static gsi = 'ratedAtDate-index';
 
     constructor({ region = 'us-east-2', envName = EnvName.DEV }) {
         super({ region, envName: EnvName.DEV });
@@ -83,13 +84,14 @@ export class ClipsRepository extends Repository {
             createdAt: dateEst(),
         });
 
-        return this.docClient.send(new PutItemCommand({
+        const {$metadata} = await this.docClient.send(new PutItemCommand({
             TableName: this.tableName,
             Item: marshall(filteredPut),
         })).catch((e) => {
             console.log(e);
             return e;
         });
+        return $metadata.httpStatusCode === 200
     }
 
     async put(putObject: IPutClip) {
@@ -128,20 +130,22 @@ export class ClipsRepository extends Repository {
             updatedAt: dateEst(),
         });
 
-        return this.docClient.send(new PutItemCommand({
+        const { $metadata } = await this.docClient.send(new PutItemCommand({
             TableName: this.tableName,
             Item: marshall(filteredPut),
         })).catch((e) => {
             console.log(e);
             return e;
         });
+        return $metadata.httpStatusCode === 200;
     }
 
     async delete(gameName, guid) {
-        return this.docClient.send(new DeleteItemCommand({
+        const { $metadata } = await this.docClient.send(new DeleteItemCommand({
             TableName: this.tableName,
             Key: marshall({ pk: gameName, sk: getSk(gameName, guid) }),
         }));
+        return $metadata.httpStatusCode === 200;
     }
 
 
@@ -160,27 +164,37 @@ export class ClipsRepository extends Repository {
         return unmarshall(Item);
     }
 
+    /**
+     * much deeper abstraction here however I think it will be much easier to implement in the
+     * other repos and it is robust enough to cover all of the short term needs i foresaw.
+     *
+     * @param gameName
+     * @param filter YOU CAN ONLY CHOSE 1 HERE
+     * @param comparator
+     * @param minimumRating
+     * @param includeUsedInVideo
+     * @param includeUsedInShort
+     */
     async getByCustomDate(
         gameName: string,
         filter: ICustomDateFilter,
-        expression: Expression,
-        minimumRating = 6, //todo
-        includeUsedInVideo = false,
-        includeUsedInShort = false,
+        comparator: Comparator, //todo this and filter can be combined in an obj, and rating can have its own comparator too
+        minimumRating: number = 6,
+        includeUsedInVideo: boolean = false,
+        includeUsedInShort: boolean = false,
     ) {
 
         const {
             FilterExpression,
             ExpressionAttributeNames,
             ExpressionAttributeValues,
-        } = DateExpressionMapper(gameName, filter, expression, includeUsedInVideo, includeUsedInShort);
-
-
-        const res = await this.docClient.send(
+            KeyConditionExpression,
+        } = DateExpressionMapper(gameName, filter, comparator, minimumRating, includeUsedInVideo, includeUsedInShort);
+        const { Items } = this.docClient.send(
             new QueryCommand({
                 TableName: this.tableName,
                 ScanIndexForward: true,
-                KeyConditionExpression: '#pk = :pk',
+                KeyConditionExpression,
                 FilterExpression,
                 ExpressionAttributeNames,
                 ExpressionAttributeValues,
@@ -189,25 +203,41 @@ export class ClipsRepository extends Repository {
             console.log(e);
             return e;
         });
-        if (res.Items?.length) {
-            console.log('No records returned for');
-            return null;
-        }
-        // return unmarshall(Items);
+        return unmarshall(Items);
     }
 }
 
 export class TagsRepository extends Repository {
-    async putTags(pk, sk) { // todo finish
-        const put = await this.docClient.send(new PutItemCommand({
-            TableName: `${this.envName}-clips`,
-            Item: marshall({ pk, sk }),
-        }));
+    public tableName;
+
+    constructor({ region = 'us-east-2', envName = EnvName.DEV }) {
+        super({ region, envName: EnvName.DEV });
+        this.tableName = `${envName}-tags`;
+    }
+
+    async put({ pk, sk, tags }: IPutTags) {
+        const { $metadata } = this.docClient.send(new PutItemCommand({
+            TableName: this.tableName,
+            Item: marshall({ pk, sk, tags }),
+        })).catch((e) => {
+            console.log(e);
+            return e;
+        });
+        return $metadata.httpStatusCode === 200;
+    };
+
+    async get({gameName, sk = ''}: IGetTags) {
+        const { Item } = await this.docClient.send(new GetItemCommand({
+            TableName: this.tableName,
+            Key: marshall({ pk: gameName, sk: `${sk}${SK_SEPARATOR}` }),
+        })).catch((e) => {
+            console.log(e);
+            return e;
+        });
+        return unmarshall(Item);
     };
 }
 
-//
-//
 // {
 //     TableName: this.tableName,
 //         ScanIndexForward: true,
