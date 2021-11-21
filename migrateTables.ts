@@ -1,11 +1,11 @@
-import { ClipsRepository, TagsRepository } from './src';
-import { EnvName } from './src/interfaces';
+import { DYNAMO_ENV_NAME } from './src/constants';
+import { ClipsRepository } from './src/repositories/clipsRepository';
+import { TagsRepository } from './src/repositories/tagsRepository';
 import { clipsTableSchema, tagsTableSchema } from './src/schema';
-import { PutItemCommand } from '@aws-sdk/client-dynamodb';
 import { tagMap } from './src/tags';
 
 // this file is just to run a one time migration to get the tables into aws
-const environment = EnvName.DEV;
+const environment = DYNAMO_ENV_NAME;
 const clipsRepo = new ClipsRepository({
     region: 'us-east-2',
     envName: environment,

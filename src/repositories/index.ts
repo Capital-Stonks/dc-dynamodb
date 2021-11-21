@@ -1,8 +1,8 @@
 import { DynamoDB } from '@aws-sdk/client-dynamodb';
-import { EnvName, IDynamoConfig } from '../interfaces';
+import { IDynamoConfig } from '../interfaces';
 import { translateConfig } from '../utils/translateConfig';
 import { DynamoDBDocumentClient } from '@aws-sdk/lib-dynamodb';
-import { DYNAMO_ENV_NAME, IS_DEVELOPMENT } from '../constants';
+import { DYNAMO_ENV_NAME } from '../constants';
 
 export enum Comparator {
     gt = '>',
@@ -12,12 +12,11 @@ export enum Comparator {
     lte = '<=',
     between = 'BETWEEN',
 }
-
 export class Repository {
     public docClient;
     public client;
     protected envName;
-    public Expression = Comparator;
+    public Comparator = Comparator;
 
     constructor({
         region = 'us-east-2',

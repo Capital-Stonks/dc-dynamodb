@@ -13,27 +13,29 @@ export class TagsRepository extends Repository {
         this.tableName = `${envName}-tags`;
     }
 
-    async put({ pk, sk, tags }: IPutTags) {
-        const { $metadata } = this.docClient
+    async put({ pk, tags }: IPutTags) {
+        const res = await this.docClient
             .send(
                 new PutItemCommand({
                     TableName: this.tableName,
-                    Item: marshall({ pk, sk, tags }),
+                    Item: marshall({ pk, tags }),
                 })
             )
             .catch((e) => {
                 console.log(e);
                 return e;
             });
-        return $metadata.httpStatusCode === 200;
+        return res?.$metadata.httpStatusCode === 200;
     }
 
-    async get({ gameName, sk = '' }: IGetTags) {
+    async get() {
         const { Item } = await this.docClient
             .send(
                 new GetItemCommand({
                     TableName: this.tableName,
-                    Key: marshall({ pk: gameName, sk: `${sk}${SK_SEPARATOR}` }),
+                    Key: marshall({
+                        pk: 'GLOBAL',
+                    }),
                 })
             )
             .catch((e) => {
