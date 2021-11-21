@@ -70,10 +70,7 @@ export const getFilterExpression = (
     return filterExpression;
 };
 
-export const getExpressionAttributeNames = (
-    filter: ICustomDateFilter,
-    minimumRating
-) => {
+export const getExpressionAttributeNames = (filter: ICustomDateFilter) => {
     const columnName = Object.keys(filter)?.[0];
     const map = columnNameKeyValueMaps[columnName];
     const ratingMap = columnNameKeyValueMaps['minimumRating'];
@@ -112,6 +109,8 @@ export const getKeyConditionExpression = (gameName, filter, expression) => {
     // if (map.Name === ClipsRepository.gsi){
     //     KeyConditionExpression += ` AND ${map.Key} ${expression} ${map.Value}`;
     // }
+
+    //let KeyConditionExpression = `#pk = 'GLOBAL' OR #pk = 'GENRE' AND sk = 'GENRE#SHOOTER' or AND begins_with(sk, ${gameName})`;
     return '#pk = :pk';
 };
 
@@ -130,10 +129,7 @@ export const DateExpressionMapper = (
         usedInVideo,
         usedInShort
     ),
-    ExpressionAttributeNames: getExpressionAttributeNames(
-        filter,
-        minimumRating
-    ),
+    ExpressionAttributeNames: getExpressionAttributeNames(filter),
     ExpressionAttributeValues: marshall(
         getExpressionAttributeValues(gameName, filter, minimumRating)
     ),

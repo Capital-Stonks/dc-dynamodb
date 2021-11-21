@@ -137,8 +137,8 @@ describe('dynamo.util', () => {
                     // usedInVideoAtDate: '2019-01-01',
                     // aggregatedAtDate: '2020-01-01',
                 },
-                clipsRepo.Expression.eq,
-                '3',
+                clipsRepo.Comparator.eq,
+                3,
                 false,
                 false
             );
@@ -148,7 +148,7 @@ describe('dynamo.util', () => {
         });
     });
     describe('tags repo', () => {
-        test.only('puts tags', async () => {
+        test('puts tags', async () => {
             const put = await tagsRepo.put({
                 pk: 'VALORANT',
                 sk: `VALORANT#`,
@@ -158,28 +158,12 @@ describe('dynamo.util', () => {
         });
 
         test.only('gets tags', async () => {
-            const put = await tagsRepo.get({
-                pk: 'VALORANT',
+            const get = await tagsRepo.get({
+                pk: 'GLOBAL',
                 sk: `VALORANT#`,
             });
-            expect(put).toBe(true);
+
+            expect(get).toHaveProperty('tags');
         });
     });
-    // ffmpeg -i 'fb386d57-22dc-48d7-85bf-d2d95d688f4b.mp4' -acodec aac -vcodec libx264 output.mp4
-    // '.\fb386d57-22dc-48d7-85bf-d2d95d688f4b (1).mp4'
-
-    // describe('getVideos', () => {
-    //     test('returns videos', async () => {
-    //         const videos = await dynamoDb.getVideos('valorant');
-    //         expect(Array.isArray(videos)).toBeTruthy();
-    //     });
-    // });
-    //
-    // describe('hasUsedVideo', () => {
-    //     test('returns true when used video', async () => {
-    //         await dynamoDb.createVideo('valorant', videoUrl2);
-    //         const hasUsed = await dynamoDb.hasUsedVideo(videoUrl2);
-    //         expect(hasUsed).toBe(true);
-    //     });
-    // });
 });

@@ -19,10 +19,6 @@ export const clipsTableSchema = (envName) => ({
             AttributeName: 'sk',
             AttributeType: 'S',
         },
-        {
-            AttributeName: 'ratedAtDate',
-            AttributeType: 'S',
-        },
     ],
     // GlobalSecondaryIndexes: [ todo on hold until gsi is fully solved
     //     {
@@ -44,7 +40,7 @@ export const clipsTableSchema = (envName) => ({
     //     },
     // ],
     ProvisionedThroughput: {
-        ReadCapacityUnits: 30,
+        ReadCapacityUnits: 1,
         WriteCapacityUnits: 1,
     },
 });
@@ -56,18 +52,10 @@ export const tagsTableSchema = (envName) => ({
             KeyType: 'HASH',
             AttributeName: 'pk',
         },
-        {
-            KeyType: 'RANGE',
-            AttributeName: 'sk',
-        },
     ],
     AttributeDefinitions: [
         {
             AttributeName: 'pk',
-            AttributeType: 'S',
-        },
-        {
-            AttributeName: 'sk',
             AttributeType: 'S',
         },
     ],

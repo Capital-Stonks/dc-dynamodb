@@ -47,8 +47,7 @@ export interface IColumnNameMap {
 
 export interface IPutTags {
     pk: string;
-    sk: string;
-    tags: string[];
+    tags: object;
 }
 export interface IGetTags {
     gameName: string;
