@@ -1,0 +1,15 @@
+service: 'pepega-datastore'
+frameworkVersion: '2'
+
+provider:
+    name: aws    
+    lambdaHashingVersion: '20201221'
+    region: us-east-2
+
+plugins:
+    - serverless-plugin-typescript
+    - serverless-offline
+    - serverless-s3-local
+    - serverless-dynamodb-local
+    - serverless-plugin-offline-dynamodb-stream
+    - serverless-create-global-dynamodb-table

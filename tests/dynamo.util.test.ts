@@ -1,4 +1,5 @@
-import { ClipsRepository, TagsRepository } from '../src/index';
+import { TagsRepository } from '../src/repositories/tagsRepository';
+import { ClipsRepository } from '../src/repositories/clipsRepository';
 import { EnvName } from '../src/interfaces';
 import { v4 } from 'uuid';
 import { getSk } from '../src/utils/dynamoUtils';
@@ -26,7 +27,9 @@ describe('dynamo.util', () => {
 
     describe('puts', () => {
         test('creates clip', async () => {
-            const date = moment().tz('America/New_York').format('YYYY-MM-DD HH:mm:ss.SSS');
+            const date = moment()
+                .tz('America/New_York')
+                .format('YYYY-MM-DD HH:mm:ss.SSS');
 
             const put = await clipsRepo.put({
                 gameName,
@@ -48,7 +51,9 @@ describe('dynamo.util', () => {
         });
 
         test('updates clip without overwriting undefined keys', async () => {
-            const date = moment().tz('America/New_York').format('YYYY-MM-DD HH:mm:ss.SSS');
+            const date = moment()
+                .tz('America/New_York')
+                .format('YYYY-MM-DD HH:mm:ss.SSS');
 
             const put = await clipsRepo.put({
                 gameName,
@@ -94,10 +99,11 @@ describe('dynamo.util', () => {
         });
     });
 
-
     describe('deletes', () => {
         test('deletes clip', async () => {
-            const date = moment().tz('America/New_York').format('YYYY-MM-DD HH:mm:ss.SSS');
+            const date = moment()
+                .tz('America/New_York')
+                .format('YYYY-MM-DD HH:mm:ss.SSS');
             const put = await clipsRepo.put({
                 gameName,
                 guid,
@@ -114,17 +120,16 @@ describe('dynamo.util', () => {
                 aggregatedAtDate: date,
             });
             expect(put).toBeTruthy();
-            const del = await clipsRepo.delete(
-                gameName,
-                guid,
-            );
+            const del = await clipsRepo.delete(gameName, guid);
             expect(del).toBeTruthy();
         });
     });
 
     describe('date query', () => {
         test('querys clip by date', async () => {
-            const date = moment().tz('America/New_York').format('YYYY-MM-DD HH:mm:ss.SSS');
+            const date = moment()
+                .tz('America/New_York')
+                .format('YYYY-MM-DD HH:mm:ss.SSS');
             const query = await clipsRepo.getByCustomDate(
                 gameName,
                 {
@@ -135,13 +140,10 @@ describe('dynamo.util', () => {
                 clipsRepo.Expression.eq,
                 '3',
                 false,
-                false,
+                false
             );
             expect(query).toBeTruthy();
-            const del = await clipsRepo.delete(
-                gameName,
-                guid,
-            );
+            const del = await clipsRepo.delete(gameName, guid);
             expect(del).toBeTruthy();
         });
     });
