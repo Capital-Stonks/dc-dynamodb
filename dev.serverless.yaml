@@ -2,9 +2,26 @@ service: 'pepega-datastore'
 frameworkVersion: '2'
 
 provider:
-    name: aws    
+    name: aws
     lambdaHashingVersion: '20201221'
     region: us-east-2
+
+custom:
+    s3:
+        port: 8004
+        directory: ./s3-local
+    dynamodb:
+        # If you only want to use DynamoDB Local in some stages, declare them here
+        stages:
+            - dev
+        start:
+            port: 8000
+            inMemory: false
+            heapInitial: 200m
+            heapMax: 1g
+            migrate: true
+            seed: true
+            convertEmptyValues: true
 
 plugins:
     - serverless-plugin-typescript

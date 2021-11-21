@@ -5,13 +5,13 @@ export enum EnvName {
 }
 
 export interface IDynamoConfig {
-    envName: EnvName,
+    envName: EnvName;
     region: string;
 }
 
 export interface IGetClip {
-    gameName: string,
-    guid: string,
+    gameName: string;
+    guid: string;
 }
 
 export interface IPutClip {

@@ -1,4 +1,3 @@
-
 const marshallOptions = {
     // Whether to automatically convert empty strings, blobs, and sets to `null`.
     convertEmptyValues: true, // false, by default.

@@ -13,5 +13,5 @@ module.exports = {
     NODE_ENV,
     SERVER_PORT,
     IS_DEVELOPMENT,
-    ENVIRONMENT_NAME
+    ENVIRONMENT_NAME,
 };
