@@ -6,7 +6,7 @@ import {
 } from '@aws-sdk/client-dynamodb';
 import { marshall, unmarshall } from '@aws-sdk/util-dynamodb';
 import { Repository, Comparator } from '.';
-import { EnvName, ICustomDateFilter, IPutClip } from '../interfaces';
+import { EnvName, IClip, ICustomDateFilter } from '../interfaces';
 import {
     dateEst,
     DateExpressionMapper,
@@ -23,7 +23,7 @@ export class ClipsRepository extends Repository {
         this.tableName = `${envName}-clips`;
     }
 
-    async create(createObject: IPutClip) {
+    async create(createObject: IClip) {
         const {
             gameName,
             guid,
@@ -73,7 +73,7 @@ export class ClipsRepository extends Repository {
         return $metadata.httpStatusCode === 200;
     }
 
-    async put(putObject: IPutClip) {
+    async put(putObject: IClip) {
         const {
             gameName,
             guid,

@@ -14,7 +14,7 @@ export interface IGetClip {
     guid: string;
 }
 
-export interface IPutClip {
+export interface IClip {
     gameName: string;
     guid: string;
     s3Path: string;
