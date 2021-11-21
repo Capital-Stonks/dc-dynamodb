@@ -1,4 +1,5 @@
-import { ClipsRepository, TagsRepository } from '../src/index';
+import { TagsRepository } from '../src/repositories/tagsRepository';
+import { ClipsRepository } from '../src/repositories/clipsRepository';
 import { EnvName } from '../src/interfaces';
 import { v4 } from 'uuid';
 import { getSk } from '../src/utils/dynamoUtils';

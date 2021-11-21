@@ -1,69 +1,33 @@
 import {
-    DynamoDB,
     PutItemCommand,
     GetItemCommand,
     DeleteItemCommand,
     QueryCommand,
 } from '@aws-sdk/client-dynamodb';
 import { marshall, unmarshall } from '@aws-sdk/util-dynamodb';
-import {
-    EnvName,
-    ICustomDateFilter,
-    IDynamoConfig,
-    IGetTags,
-    IPutClip,
-    IPutTags,
-} from './interfaces';
-import { translateConfig } from './utils/translateConfig';
-import { DynamoDBDocumentClient } from '@aws-sdk/lib-dynamodb';
-import { SK_SEPARATOR } from '../constants';
+import { Repository, Comparator } from '.';
+import { DYNAMO_ENV_NAME } from '../constants';
+import { EnvName, IClip, ICustomDateFilter } from '../interfaces';
 import {
     dateEst,
     DateExpressionMapper,
     getSk,
     preMarshallPrep,
-} from './utils/dynamoUtils';
-
-enum Comparator {
-    gt = '>',
-    gte = '>=',
-    eq = '=',
-    lt = '<',
-    lte = '<=',
-    between = 'BETWEEN',
-}
-
-class Repository {
-    public docClient;
-    public client;
-    protected envName;
-    public Comparator = Comparator;
-
-    constructor({
-        region = 'us-east-2',
-        envName = EnvName.DEV,
-    }: IDynamoConfig) {
-        this.client = new DynamoDB({ region });
-        this.docClient = DynamoDBDocumentClient.from(
-            this.client,
-            translateConfig
-        );
-        this.envName = envName;
-    }
-}
+} from '../utils/dynamoUtils';
 
 export class ClipsRepository extends Repository {
     public tableName;
     public static gsi = 'ratedAtDate-index';
 
-    constructor({ region = 'us-east-2', envName = EnvName.DEV }) {
+    constructor({ region = 'us-east-2', envName = DYNAMO_ENV_NAME }) {
         super({ region, envName: EnvName.DEV });
         this.tableName = `${envName}-clips`;
     }
 
-    async create(createObject: IPutClip) {
+    async create(createObject: IClip) {
         const {
             gameName,
+            s3Path,
             guid,
             username,
             source,
@@ -81,6 +45,7 @@ export class ClipsRepository extends Repository {
         const filteredPut = preMarshallPrep({
             pk: gameName,
             sk: getSk(gameName, guid),
+            s3Path,
             guid,
             aggregatedAtDate,
             username,
@@ -111,11 +76,12 @@ export class ClipsRepository extends Repository {
         return $metadata.httpStatusCode === 200;
     }
 
-    async put(putObject: IPutClip) {
+    async put(putObject: IClip) {
         const {
             gameName,
             guid,
             username,
+            s3Path,
             source,
             sourceTitle,
             sourceDescription,
@@ -132,6 +98,7 @@ export class ClipsRepository extends Repository {
             pk: gameName,
             sk: getSk(gameName, guid),
             guid,
+            s3Path,
             username,
             source,
             sourceTitle,
@@ -240,65 +207,3 @@ export class ClipsRepository extends Repository {
         return unmarshall(Items);
     }
 }
-
-export class TagsRepository extends Repository {
-    public tableName;
-
-    constructor({ region = 'us-east-2', envName = EnvName.DEV }) {
-        super({ region, envName: EnvName.DEV });
-        this.tableName = `${envName}-tags`;
-    }
-
-    async put({ pk, tags }: IPutTags) {
-        const res = await this.docClient
-            .send(
-                new PutItemCommand({
-                    TableName: this.tableName,
-                    Item: marshall({ pk, tags }),
-                })
-            )
-            .catch((e) => {
-                console.log(e);
-                return e;
-            });
-        return res?.$metadata.httpStatusCode === 200;
-    }
-
-    async get() {
-        const { Item } = await this.docClient
-            .send(
-                new GetItemCommand({
-                    TableName: this.tableName,
-                    Key: marshall({
-                        pk: 'GLOBAL',
-                    }),
-                })
-            )
-            .catch((e) => {
-                console.log(e);
-                return e;
-            });
-        return unmarshall(Item);
-    }
-}
-
-// {
-//     TableName: this.tableName,
-//         ScanIndexForward: true,
-//     KeyConditionExpression: '#pk = :pk',
-//     FilterExpression,
-//     ExpressionAttributeNames: {
-//     '#pk': 'pk',
-//         [ratedAtDateMap.Key]: ratedAtDateMap.Name,
-//         [usedInVideoAtDateMap.Key]: usedInVideoAtDateMap.Name,
-//         [aggregatedAtDateMap.Key]: aggregatedAtDateMap.Name,
-//         [aggregatedAtDateMap.Key]: usedInShortAtDateMap.Name,
-// },
-//     ExpressionAttributeValues: marshall({
-//         ':pk': gameName,
-//         [ratedAtDateMap.Value]: ratedAtDate,
-//         // [usedInShortAtDateMap.Value]: usedInVideoAtDate,
-//         // [aggregatedAtDateMap.Value]: aggregatedAtDate,
-//         // [usedInShortAtDateMap.Value]: usedInShortAtDate,
-//     }),
-// }

@@ -2,7 +2,6 @@ import { SK_SEPARATOR } from '../../constants';
 import momentTz from 'moment-timezone';
 import { IColumnNameMap, ICustomDateFilter } from '../interfaces';
 import { marshall } from '@aws-sdk/util-dynamodb';
-import { ClipsRepository } from '../index';
 
 const moment = momentTz;
 
