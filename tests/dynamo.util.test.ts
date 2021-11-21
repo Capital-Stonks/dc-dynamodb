@@ -26,7 +26,9 @@ describe('dynamo.util', () => {
 
     describe('puts', () => {
         test('creates clip', async () => {
-            const date = moment().tz('America/New_York').format('YYYY-MM-DD HH:mm:ss.SSS');
+            const date = moment()
+                .tz('America/New_York')
+                .format('YYYY-MM-DD HH:mm:ss.SSS');
 
             const put = await clipsRepo.put({
                 gameName,
@@ -48,7 +50,9 @@ describe('dynamo.util', () => {
         });
 
         test('updates clip without overwriting undefined keys', async () => {
-            const date = moment().tz('America/New_York').format('YYYY-MM-DD HH:mm:ss.SSS');
+            const date = moment()
+                .tz('America/New_York')
+                .format('YYYY-MM-DD HH:mm:ss.SSS');
 
             const put = await clipsRepo.put({
                 gameName,
@@ -94,10 +98,11 @@ describe('dynamo.util', () => {
         });
     });
 
-
     describe('deletes', () => {
         test('deletes clip', async () => {
-            const date = moment().tz('America/New_York').format('YYYY-MM-DD HH:mm:ss.SSS');
+            const date = moment()
+                .tz('America/New_York')
+                .format('YYYY-MM-DD HH:mm:ss.SSS');
             const put = await clipsRepo.put({
                 gameName,
                 guid,
@@ -114,17 +119,16 @@ describe('dynamo.util', () => {
                 aggregatedAtDate: date,
             });
             expect(put).toBeTruthy();
-            const del = await clipsRepo.delete(
-                gameName,
-                guid,
-            );
+            const del = await clipsRepo.delete(gameName, guid);
             expect(del).toBeTruthy();
         });
     });
 
     describe('date query', () => {
         test('querys clip by date', async () => {
-            const date = moment().tz('America/New_York').format('YYYY-MM-DD HH:mm:ss.SSS');
+            const date = moment()
+                .tz('America/New_York')
+                .format('YYYY-MM-DD HH:mm:ss.SSS');
             const query = await clipsRepo.getByCustomDate(
                 gameName,
                 {
@@ -132,21 +136,18 @@ describe('dynamo.util', () => {
                     // usedInVideoAtDate: '2019-01-01',
                     // aggregatedAtDate: '2020-01-01',
                 },
-                clipsRepo.Expression.eq,
-                '3',
+                clipsRepo.Comparator.eq,
+                3,
                 false,
-                false,
+                false
             );
             expect(query).toBeTruthy();
-            const del = await clipsRepo.delete(
-                gameName,
-                guid,
-            );
+            const del = await clipsRepo.delete(gameName, guid);
             expect(del).toBeTruthy();
         });
     });
     describe('tags repo', () => {
-        test.only('puts tags', async () => {
+        test('puts tags', async () => {
             const put = await tagsRepo.put({
                 pk: 'VALORANT',
                 sk: `VALORANT#`,
@@ -156,28 +157,12 @@ describe('dynamo.util', () => {
         });
 
         test.only('gets tags', async () => {
-            const put = await tagsRepo.get({
-                pk: 'VALORANT',
+            const get = await tagsRepo.get({
+                pk: 'GLOBAL',
                 sk: `VALORANT#`,
             });
-            expect(put).toBe(true);
+
+            expect(get).toHaveProperty('tags');
         });
     });
-    // ffmpeg -i 'fb386d57-22dc-48d7-85bf-d2d95d688f4b.mp4' -acodec aac -vcodec libx264 output.mp4
-    // '.\fb386d57-22dc-48d7-85bf-d2d95d688f4b (1).mp4'
-
-    // describe('getVideos', () => {
-    //     test('returns videos', async () => {
-    //         const videos = await dynamoDb.getVideos('valorant');
-    //         expect(Array.isArray(videos)).toBeTruthy();
-    //     });
-    // });
-    //
-    // describe('hasUsedVideo', () => {
-    //     test('returns true when used video', async () => {
-    //         await dynamoDb.createVideo('valorant', videoUrl2);
-    //         const hasUsed = await dynamoDb.hasUsedVideo(videoUrl2);
-    //         expect(hasUsed).toBe(true);
-    //     });
-    // });
 });
