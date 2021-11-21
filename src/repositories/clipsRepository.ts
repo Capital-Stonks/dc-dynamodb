@@ -6,6 +6,7 @@ import {
 } from '@aws-sdk/client-dynamodb';
 import { marshall, unmarshall } from '@aws-sdk/util-dynamodb';
 import { Repository, Comparator } from '.';
+import { DYNAMO_ENV_NAME } from '../constants';
 import { EnvName, IClip, ICustomDateFilter } from '../interfaces';
 import {
     dateEst,
@@ -18,7 +19,7 @@ export class ClipsRepository extends Repository {
     public tableName;
     public static gsi = 'ratedAtDate-index';
 
-    constructor({ region = 'us-east-2', envName = EnvName.DEV }) {
+    constructor({ region = 'us-east-2', envName = DYNAMO_ENV_NAME }) {
         super({ region, envName: EnvName.DEV });
         this.tableName = `${envName}-clips`;
     }
@@ -26,6 +27,7 @@ export class ClipsRepository extends Repository {
     async create(createObject: IClip) {
         const {
             gameName,
+            s3Path,
             guid,
             username,
             source,
@@ -43,6 +45,7 @@ export class ClipsRepository extends Repository {
         const filteredPut = preMarshallPrep({
             pk: gameName,
             sk: getSk(gameName, guid),
+            s3Path,
             guid,
             aggregatedAtDate,
             username,
@@ -78,6 +81,7 @@ export class ClipsRepository extends Repository {
             gameName,
             guid,
             username,
+            s3Path,
             source,
             sourceTitle,
             sourceDescription,
@@ -94,6 +98,7 @@ export class ClipsRepository extends Repository {
             pk: gameName,
             sk: getSk(gameName, guid),
             guid,
+            s3Path,
             username,
             source,
             sourceTitle,

@@ -2,15 +2,16 @@
     "name": "pepega-dynamodb",
     "version": "1.0.0",
     "description": "",
-    "main": "index.js",
+    "main": "./build/index.js",
     "scripts": {
         "build": "tsc",
         "start": "node ./index.js",
         "migrate": "node ./migrateTables.js",
         "start-dev": "nodemon --config nodemon.json --inspect=0.0.0.0:9229 src/index.ts",
         "dev": "cross-env NODE_ENV=development node --inspect=0.0.0.0:9245 ./node_modules/serverless/bin/serverless.js offline --config dev.serverless.yaml -s dev",
-        "test": "node --inspect=0.0.0.0:9228 ./node_modules/jest/bin/jest.js --runInBand --forceExit",
-        "test-integration": "node --inspect=0.0.0.0:9228 ./node_modules/jest/bin/jest.js -c jest-integration.config.js --runInBand --forceExit"
+        "dev-2": "serverless offline --config dev.serverless.yaml start",
+        "test": "cross-env NODE_ENV=development node --inspect=0.0.0.0:9232 ./node_modules/jest/bin/jest.js --runInBand --forceExit",
+        "test-integration": "cross-env NODE_ENV=development node --inspect=0.0.0.0:9232 ./node_modules/jest/bin/jest.js -c jest-integration.config.js --runInBand --forceExit"
     },
     "repository": {
         "type": "git",
@@ -34,9 +35,6 @@
         "uuid": "^8.3.2"
     },
     "devDependencies": {
-        "serverless-create-global-dynamodb-table": "^3.1.1",
-        "serverless-dynamodb-local": "^0.2.40",
-        "serverless-plugin-offline-dynamodb-stream": "^1.0.20",
         "@types/jest": "^27.0.2",
         "@types/node": "^16.10.3",
         "eslint": "^7.11.0",
@@ -50,9 +48,6 @@
         "jest": "^27.2.4",
         "nodemon": "^2.0.6",
         "prettier": "^2.4.1",
-        "serverless": "^2.66.2",
-        "serverless-offline": "^8.3.0",
-        "serverless-plugin-typescript": "^2.1.0",
         "ts-jest": "^27.0.7",
         "ts-lint": "^4.5.1",
         "ts-node": "^10.4.0",

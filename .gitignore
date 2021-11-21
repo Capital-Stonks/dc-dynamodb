@@ -115,3 +115,6 @@ clips/**
 terraform/.terraform
 
 build
+.build
+.serverless
+s3-local

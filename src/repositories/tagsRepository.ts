@@ -3,11 +3,12 @@ import { marshall, unmarshall } from '@aws-sdk/util-dynamodb';
 import { EnvName, IGetTags, IPutTags } from '../interfaces';
 import { SK_SEPARATOR } from '../../constants';
 import { Repository } from '.';
+import { DYNAMO_ENV_NAME } from '../constants';
 
 export class TagsRepository extends Repository {
     public tableName;
 
-    constructor({ region = 'us-east-2', envName = EnvName.DEV }) {
+    constructor({ region = 'us-east-2', envName = DYNAMO_ENV_NAME }) {
         super({ region, envName: EnvName.DEV });
         this.tableName = `${envName}-tags`;
     }
