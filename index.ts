@@ -14,3 +14,5 @@ export const tagsRepo = new TagsRepository({
     region: AWS_REGION,
     envName: DYNAMO_ENV_NAME,
 });
+
+export * from './src/interfaces';

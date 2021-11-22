@@ -25,4 +25,5 @@ exports.tagsRepo = new tagsRepository_1.TagsRepository({
     region: constants_1.AWS_REGION,
     envName: constants_1.DYNAMO_ENV_NAME,
 });
+__exportStar(require("./src/interfaces"), exports);
 //# sourceMappingURL=index.js.map
