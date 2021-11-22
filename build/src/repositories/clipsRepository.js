@@ -5,12 +5,12 @@ const client_dynamodb_1 = require("@aws-sdk/client-dynamodb");
 const util_dynamodb_1 = require("@aws-sdk/util-dynamodb");
 const _1 = require(".");
 const constants_1 = require("../constants");
-const interfaces_1 = require("../interfaces");
 const dynamoUtils_1 = require("../utils/dynamoUtils");
+const logItUtils_1 = require("../utils/logItUtils");
 class ClipsRepository extends _1.Repository {
-    constructor({ region = 'us-east-2', envName = constants_1.DYNAMO_ENV_NAME }) {
-        super({ region, envName: interfaces_1.EnvName.DEV });
-        this.tableName = `${envName}-clips`;
+    constructor(config = { region: 'us-east-2', envName: constants_1.DYNAMO_ENV_NAME }) {
+        super(config);
+        this.tableName = `${config.envName}-clips`;
     }
     async create(createObject) {
         const { gameName, s3Path, guid, username, source, sourceTitle, sourceDescription, tags, duration, resolutionHeight, rating, ratedAtDate, usedInVideoAtDate, usedInShortAtDate, aggregatedAtDate, } = createObject;
@@ -38,10 +38,7 @@ class ClipsRepository extends _1.Repository {
             TableName: this.tableName,
             Item: (0, util_dynamodb_1.marshall)(filteredPut),
         }))
-            .catch((e) => {
-            console.log(e);
-            return e;
-        });
+            .catch(logItUtils_1.logIt);
         return $metadata.httpStatusCode === 200;
     }
     async put(putObject) {
@@ -70,10 +67,7 @@ class ClipsRepository extends _1.Repository {
             TableName: this.tableName,
             Item: (0, util_dynamodb_1.marshall)(filteredPut),
         }))
-            .catch((e) => {
-            console.log(e);
-            return e;
-        });
+            .catch(logItUtils_1.logIt);
         return $metadata.httpStatusCode === 200;
     }
     async delete(gameName, guid) {
@@ -89,10 +83,7 @@ class ClipsRepository extends _1.Repository {
             TableName: this.tableName,
             Key: (0, util_dynamodb_1.marshall)({ pk: gameName, sk: (0, dynamoUtils_1.getSk)(gameName, guid) }),
         }))
-            .catch((e) => {
-            console.log(e);
-            return e;
-        });
+            .catch(logItUtils_1.logIt);
         if (!Item) {
             console.log('No records returned for', (0, dynamoUtils_1.getSk)(gameName, guid));
             return null;
@@ -113,7 +104,7 @@ class ClipsRepository extends _1.Repository {
     async getByCustomDate(gameName, filter, comparator, //todo this and filter can be combined in an obj, and rating can have its own comparator too
     minimumRating = 7, includeUsedInVideo = false, includeUsedInShort = false) {
         const { FilterExpression, ExpressionAttributeNames, ExpressionAttributeValues, KeyConditionExpression, } = (0, dynamoUtils_1.DateExpressionMapper)(gameName, filter, comparator, minimumRating, includeUsedInVideo, includeUsedInShort);
-        const { Items } = this.docClient
+        const { Items } = await this.docClient
             .send(new client_dynamodb_1.QueryCommand({
             TableName: this.tableName,
             ScanIndexForward: true,
@@ -122,11 +113,23 @@ class ClipsRepository extends _1.Repository {
             ExpressionAttributeNames,
             ExpressionAttributeValues,
         }))
-            .catch((e) => {
-            console.log(e);
-            return e;
-        });
+            .catch(logItUtils_1.logIt);
         return (0, util_dynamodb_1.unmarshall)(Items);
+    }
+    async getByFolder(folder, gameName) {
+        const { Items } = await this.docClient
+            .send(new client_dynamodb_1.QueryCommand({
+            TableName: this.tableName,
+            ScanIndexForward: true,
+            KeyConditionExpression: 'pk = :pk',
+            FilterExpression: `contains(s3Path, :folder)`,
+            ExpressionAttributeValues: (0, util_dynamodb_1.marshall)({
+                ':pk': gameName,
+                ':folder': folder,
+            }),
+        }))
+            .catch(logItUtils_1.logIt);
+        return Items.map(util_dynamodb_1.unmarshall);
     }
 }
 exports.ClipsRepository = ClipsRepository;

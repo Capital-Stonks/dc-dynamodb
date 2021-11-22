@@ -7,21 +7,22 @@ import {
 import { marshall, unmarshall } from '@aws-sdk/util-dynamodb';
 import { Repository, Comparator } from '.';
 import { DYNAMO_ENV_NAME } from '../constants';
-import { EnvName, IClip, ICustomDateFilter } from '../interfaces';
+import { IClip, ICustomDateFilter } from '../interfaces';
 import {
     dateEst,
     DateExpressionMapper,
     getSk,
     preMarshallPrep,
 } from '../utils/dynamoUtils';
+import { logIt } from '../utils/logItUtils';
 
 export class ClipsRepository extends Repository {
     public tableName;
     public static gsi = 'ratedAtDate-index';
 
-    constructor({ region = 'us-east-2', envName = DYNAMO_ENV_NAME }) {
-        super({ region, envName: EnvName.DEV });
-        this.tableName = `${envName}-clips`;
+    constructor(config = { region: 'us-east-2', envName: DYNAMO_ENV_NAME }) {
+        super(config);
+        this.tableName = `${config.envName}-clips`;
     }
 
     async create(createObject: IClip) {
@@ -69,10 +70,7 @@ export class ClipsRepository extends Repository {
                     Item: marshall(filteredPut),
                 })
             )
-            .catch((e) => {
-                console.log(e);
-                return e;
-            });
+            .catch(logIt);
         return $metadata.httpStatusCode === 200;
     }
 
@@ -121,10 +119,7 @@ export class ClipsRepository extends Repository {
                     Item: marshall(filteredPut),
                 })
             )
-            .catch((e) => {
-                console.log(e);
-                return e;
-            });
+            .catch(logIt);
         return $metadata.httpStatusCode === 200;
     }
 
@@ -146,10 +141,7 @@ export class ClipsRepository extends Repository {
                     Key: marshall({ pk: gameName, sk: getSk(gameName, guid) }),
                 })
             )
-            .catch((e) => {
-                console.log(e);
-                return e;
-            });
+            .catch(logIt);
         if (!Item) {
             console.log('No records returned for', getSk(gameName, guid));
             return null;
@@ -189,7 +181,7 @@ export class ClipsRepository extends Repository {
             includeUsedInVideo,
             includeUsedInShort
         );
-        const { Items } = this.docClient
+        const { Items } = await this.docClient
             .send(
                 new QueryCommand({
                     TableName: this.tableName,
@@ -200,10 +192,25 @@ export class ClipsRepository extends Repository {
                     ExpressionAttributeValues,
                 })
             )
-            .catch((e) => {
-                console.log(e);
-                return e;
-            });
+            .catch(logIt);
         return unmarshall(Items);
+    }
+
+    async getByFolder(folder: string, gameName: string) {
+        const { Items } = await this.docClient
+            .send(
+                new QueryCommand({
+                    TableName: this.tableName,
+                    ScanIndexForward: true,
+                    KeyConditionExpression: 'pk = :pk',
+                    FilterExpression: `contains(s3Path, :folder)`,
+                    ExpressionAttributeValues: marshall({
+                        ':pk': gameName,
+                        ':folder': folder,
+                    }),
+                })
+            )
+            .catch(logIt);
+        return Items.map(unmarshall);
     }
 }
