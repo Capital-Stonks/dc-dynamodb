@@ -228,4 +228,20 @@ export class ClipsRepository extends Repository {
         );
         return Items.map(unmarshall);
     }
+
+    async getByS3Path(gameName: string, s3Path: string): Promise<IClip> {
+        const { Items } = await this.docClient.send(
+            new QueryCommand({
+                TableName: this.tableName,
+                ScanIndexForward: true,
+                KeyConditionExpression: 'pk = :pk',
+                FilterExpression: `s3Path = :s3Path`,
+                ExpressionAttributeValues: marshall({
+                    ':pk': gameName,
+                    ':s3Path': s3Path,
+                }),
+            })
+        );
+        return Items.map(unmarshall)[0];
+    }
 }
