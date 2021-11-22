@@ -25,7 +25,7 @@ export class ClipsRepository extends Repository {
         this.tableName = `${config.envName}-clips`;
     }
 
-    async create(createObject: IClip) {
+    async create(createObject: IClip): Promise<Boolean> {
         const {
             gameName,
             s3Path,
@@ -74,7 +74,7 @@ export class ClipsRepository extends Repository {
         return $metadata.httpStatusCode === 200;
     }
 
-    async put(putObject: IClip) {
+    async put(putObject: IClip): Promise<Boolean> {
         const {
             gameName,
             guid,
@@ -123,7 +123,7 @@ export class ClipsRepository extends Repository {
         return $metadata.httpStatusCode === 200;
     }
 
-    async delete(gameName, guid) {
+    async delete(gameName, guid): Promise<Boolean> {
         const { $metadata } = await this.docClient.send(
             new DeleteItemCommand({
                 TableName: this.tableName,
@@ -133,7 +133,7 @@ export class ClipsRepository extends Repository {
         return $metadata.httpStatusCode === 200;
     }
 
-    async get(gameName, guid) {
+    async get(gameName, guid): Promise<IClip | null> {
         const { Item } = await this.docClient
             .send(
                 new GetItemCommand({
@@ -146,7 +146,7 @@ export class ClipsRepository extends Repository {
             console.log('No records returned for', getSk(gameName, guid));
             return null;
         }
-        return unmarshall(Item);
+        return unmarshall(Item) as IClip;
     }
 
     /**
@@ -196,7 +196,7 @@ export class ClipsRepository extends Repository {
         return unmarshall(Items);
     }
 
-    async getByFolder(folder: string, gameName: string) {
+    async getByFolder(folder: string, gameName: string): Promise<IClip[]> {
         const { Items } = await this.docClient
             .send(
                 new QueryCommand({
@@ -211,6 +211,21 @@ export class ClipsRepository extends Repository {
                 })
             )
             .catch(logIt);
+        return Items.map(unmarshall);
+    }
+
+    async getUsedInShort(gameName: string): Promise<IClip[]> {
+        const { Items } = await this.docClient.send(
+            new QueryCommand({
+                TableName: this.tableName,
+                ScanIndexForward: true,
+                KeyConditionExpression: 'pk = :pk',
+                FilterExpression: `attribute_exists(usedInShortAtDate)`,
+                ExpressionAttributeValues: marshall({
+                    ':pk': gameName,
+                }),
+            })
+        );
         return Items.map(unmarshall);
     }
 }

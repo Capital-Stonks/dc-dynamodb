@@ -131,6 +131,18 @@ class ClipsRepository extends _1.Repository {
             .catch(logItUtils_1.logIt);
         return Items.map(util_dynamodb_1.unmarshall);
     }
+    async getUsedInShort(gameName) {
+        const { Items } = await this.docClient.send(new client_dynamodb_1.QueryCommand({
+            TableName: this.tableName,
+            ScanIndexForward: true,
+            KeyConditionExpression: 'pk = :pk',
+            FilterExpression: `attribute_exists(usedInShortAtDate)`,
+            ExpressionAttributeValues: (0, util_dynamodb_1.marshall)({
+                ':pk': gameName,
+            }),
+        }));
+        return Items.map(util_dynamodb_1.unmarshall);
+    }
 }
 exports.ClipsRepository = ClipsRepository;
 ClipsRepository.gsi = 'ratedAtDate-index';
