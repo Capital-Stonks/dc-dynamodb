@@ -17,6 +17,7 @@ const tagsRepository_1 = require("./src/repositories/tagsRepository");
 __exportStar(require("./src/repositories/tagsRepository"), exports);
 __exportStar(require("./src/repositories/clipsRepository"), exports);
 __exportStar(require("./src/utils/clipsDataStoreUtils"), exports);
+__exportStar(require("./src/utils/dateUtils"), exports);
 exports.clipsRepo = new clipsRepository_1.ClipsRepository({
     region: constants_1.AWS_REGION,
     envName: constants_1.DYNAMO_ENV_NAME,

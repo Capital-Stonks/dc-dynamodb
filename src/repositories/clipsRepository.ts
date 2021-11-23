@@ -8,8 +8,8 @@ import { marshall, unmarshall } from '@aws-sdk/util-dynamodb';
 import { Repository, Comparator } from '.';
 import { DYNAMO_ENV_NAME } from '../constants';
 import { IClip, ICustomDateFilter } from '../interfaces';
+import { dateEst } from '../utils/dateUtils';
 import {
-    dateEst,
     DateExpressionMapper,
     getSk,
     preMarshallPrep,

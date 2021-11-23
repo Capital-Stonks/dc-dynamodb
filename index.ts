@@ -5,6 +5,7 @@ import { TagsRepository } from './src/repositories/tagsRepository';
 export * from './src/repositories/tagsRepository';
 export * from './src/repositories/clipsRepository';
 export * from './src/utils/clipsDataStoreUtils';
+export * from './src/utils/dateUtils';
 
 export const clipsRepo = new ClipsRepository({
     region: AWS_REGION,
