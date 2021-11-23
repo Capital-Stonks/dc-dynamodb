@@ -144,17 +144,7 @@ class ClipsRepository extends _1.Repository {
         return Items.map(util_dynamodb_1.unmarshall);
     }
     async getByS3Path(gameName, s3Path) {
-        const { Items } = await this.docClient.send(new client_dynamodb_1.QueryCommand({
-            TableName: this.tableName,
-            ScanIndexForward: true,
-            KeyConditionExpression: 'pk = :pk',
-            FilterExpression: `s3Path = :s3Path`,
-            ExpressionAttributeValues: (0, util_dynamodb_1.marshall)({
-                ':pk': gameName,
-                ':s3Path': s3Path,
-            }),
-        }));
-        return Items.map(util_dynamodb_1.unmarshall)[0];
+        return this.getByEquality(gameName, { s3Path }, true);
     }
 }
 exports.ClipsRepository = ClipsRepository;

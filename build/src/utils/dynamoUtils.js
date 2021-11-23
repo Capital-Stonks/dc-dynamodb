@@ -3,7 +3,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.DateExpressionMapper = exports.getKeyConditionExpression = exports.getExpressionAttributeValues = exports.getExpressionAttributeNames = exports.getFilterExpression = exports.columnNameKeyValueMaps = exports.dateEst = exports.getSk = exports.preMarshallPrep = void 0;
+exports.objectToExpressionAttributeValues = exports.objectToEqualityFilterExpression = exports.DateExpressionMapper = exports.getKeyConditionExpression = exports.getExpressionAttributeValues = exports.getExpressionAttributeNames = exports.getFilterExpression = exports.columnNameKeyValueMaps = exports.dateEst = exports.getSk = exports.preMarshallPrep = void 0;
 const constants_1 = require("../../constants");
 const moment_timezone_1 = __importDefault(require("moment-timezone"));
 const util_dynamodb_1 = require("@aws-sdk/util-dynamodb");
@@ -106,4 +106,19 @@ const DateExpressionMapper = (gameName, filter, expression, minimumRating, usedI
     KeyConditionExpression: (0, exports.getKeyConditionExpression)(gameName, filter, expression),
 });
 exports.DateExpressionMapper = DateExpressionMapper;
+const objectToEqualityFilterExpression = (object) => {
+    return Object.keys(object)
+        .map((key) => `${key} = :${key}`)
+        .join(' AND ');
+};
+exports.objectToEqualityFilterExpression = objectToEqualityFilterExpression;
+const objectToExpressionAttributeValues = (object) => {
+    return Object.entries(object).reduce((acc, [key, value]) => {
+        return {
+            ...acc,
+            [`:${key}`]: value,
+        };
+    }, {});
+};
+exports.objectToExpressionAttributeValues = objectToExpressionAttributeValues;
 //# sourceMappingURL=dynamoUtils.js.map

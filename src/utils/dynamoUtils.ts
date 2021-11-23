@@ -139,3 +139,18 @@ export const DateExpressionMapper = (
         expression
     ),
 });
+
+export const objectToEqualityFilterExpression = (object: object): string => {
+    return Object.keys(object)
+        .map((key) => `${key} = :${key}`)
+        .join(' AND ');
+};
+
+export const objectToExpressionAttributeValues = (object: object): object => {
+    return Object.entries(object).reduce((acc, [key, value]) => {
+        return {
+            ...acc,
+            [`:${key}`]: value,
+        };
+    }, {});
+};

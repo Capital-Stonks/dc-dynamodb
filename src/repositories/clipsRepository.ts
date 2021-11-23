@@ -17,7 +17,6 @@ import {
 import { logIt } from '../utils/logItUtils';
 
 export class ClipsRepository extends Repository {
-    public tableName;
     public static gsi = 'ratedAtDate-index';
 
     constructor(config = { region: 'us-east-2', envName: DYNAMO_ENV_NAME }) {
@@ -230,18 +229,6 @@ export class ClipsRepository extends Repository {
     }
 
     async getByS3Path(gameName: string, s3Path: string): Promise<IClip> {
-        const { Items } = await this.docClient.send(
-            new QueryCommand({
-                TableName: this.tableName,
-                ScanIndexForward: true,
-                KeyConditionExpression: 'pk = :pk',
-                FilterExpression: `s3Path = :s3Path`,
-                ExpressionAttributeValues: marshall({
-                    ':pk': gameName,
-                    ':s3Path': s3Path,
-                }),
-            })
-        );
-        return Items.map(unmarshall)[0];
+        return this.getByEquality(gameName, { s3Path }, true);
     }
 }
