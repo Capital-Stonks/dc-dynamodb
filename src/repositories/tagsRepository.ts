@@ -1,7 +1,6 @@
 import { PutItemCommand, GetItemCommand } from '@aws-sdk/client-dynamodb';
 import { marshall, unmarshall } from '@aws-sdk/util-dynamodb';
 import { EnvName, IGetTags, IPutTags } from '../interfaces';
-import { SK_SEPARATOR } from '../../constants';
 import { Repository } from '.';
 import { DYNAMO_ENV_NAME } from '../constants';
 
