@@ -13,3 +13,5 @@ export const DYNAMO_ENV_NAME = IS_DEVELOPMENT
     : EnvName.PRODUCTION;
 
 export const BUCKET_NAME = IS_DEVELOPMENT ? 'dev-pepega-clips' : 'pepega-clips';
+
+export const SK_SEPARATOR = '#';

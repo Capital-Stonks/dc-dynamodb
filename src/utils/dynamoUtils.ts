@@ -1,4 +1,4 @@
-import { SK_SEPARATOR } from '../../constants';
+import { SK_SEPARATOR } from '../constants';
 import momentTz from 'moment-timezone';
 import { IColumnNameMap, ICustomDateFilter } from '../interfaces';
 import { marshall } from '@aws-sdk/util-dynamodb';
