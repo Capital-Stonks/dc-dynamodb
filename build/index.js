@@ -27,4 +27,5 @@ exports.tagsRepo = new tagsRepository_1.TagsRepository({
     envName: constants_1.DYNAMO_ENV_NAME,
 });
 __exportStar(require("./src/interfaces"), exports);
+__exportStar(require("./src/utils/clipEntityUtils"), exports);
 //# sourceMappingURL=index.js.map

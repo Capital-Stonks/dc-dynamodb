@@ -17,3 +17,4 @@ export const tagsRepo = new TagsRepository({
 });
 
 export * from './src/interfaces';
+export * from './src/utils/clipEntityUtils';
