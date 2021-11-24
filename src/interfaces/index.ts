@@ -18,6 +18,8 @@ export interface IClip {
     gameName: string;
     guid: string;
     s3Path: string;
+    createdAt: string;
+    updatedAt?: string;
     username?: string;
     source?: string;
     sourceTitle?: string;

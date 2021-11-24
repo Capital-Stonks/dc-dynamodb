@@ -1,6 +1,7 @@
 import { IClip } from '../interfaces';
 import { v4 } from 'uuid';
 import { createS3Path } from './s3PathUtils';
+import { dateEst } from './dateUtils';
 
 interface IClipPartial {
     username?: string;
@@ -15,6 +16,7 @@ interface IClipPartial {
     tags?: string[];
     duration?: number;
     resolutionHeight?: number;
+    updatedAt?: string;
 }
 
 export const createClipEntity = (
@@ -27,6 +29,7 @@ export const createClipEntity = (
     return {
         guid,
         gameName,
+        createdAt: dateEst(),
         s3Path: createS3Path(folder, gameName, `${guid}.${fileExtension}`),
         ...columns,
     };
