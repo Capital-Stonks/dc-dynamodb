@@ -21,6 +21,8 @@ export interface IClip {
     username?: string;
     source?: string;
     sourceTitle?: string;
+    videoUrl?: string;
+    videoLength?: string;
     sourceDescription?: string;
     rating?: number;
     ratedAtDate?: string;
