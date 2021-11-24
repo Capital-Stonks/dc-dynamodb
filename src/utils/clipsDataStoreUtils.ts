@@ -1,13 +1,9 @@
-import { AWS_REGION } from '../constants';
-import { EnvName, IClip } from '../interfaces';
+import { IClip } from '../interfaces';
 import { ClipsRepository } from '../repositories/clipsRepository';
 import * as s3Util from './s3Utils';
 import * as s3PathUtils from './s3PathUtils';
 
-const clipRepo = new ClipsRepository({
-    region: AWS_REGION,
-    envName: EnvName.DEV,
-});
+const clipRepo = new ClipsRepository();
 
 export const createClip = async (
     clip: IClip,

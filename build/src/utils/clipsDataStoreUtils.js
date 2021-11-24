@@ -20,15 +20,10 @@ var __importStar = (this && this.__importStar) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.deleteClip = exports.moveClip = exports.updateClip = exports.createClip = void 0;
-const constants_1 = require("../constants");
-const interfaces_1 = require("../interfaces");
 const clipsRepository_1 = require("../repositories/clipsRepository");
 const s3Util = __importStar(require("./s3Utils"));
 const s3PathUtils = __importStar(require("./s3PathUtils"));
-const clipRepo = new clipsRepository_1.ClipsRepository({
-    region: constants_1.AWS_REGION,
-    envName: interfaces_1.EnvName.DEV,
-});
+const clipRepo = new clipsRepository_1.ClipsRepository();
 const createClip = async (clip, filePath) => {
     await clipRepo.create(clip);
     return s3Util.putObjectFromFile(clip.s3Path, filePath).then(() => clip);

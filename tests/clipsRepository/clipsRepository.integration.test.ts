@@ -40,4 +40,11 @@ describe('clipsRepository', () => {
             expect(usedInShort[0].guid).toBe(clip3.guid);
         });
     });
+
+    describe('getByS3Path', () => {
+        test('returns entities by s3 path', async () => {
+            const entity = await clipRepo.getByS3Path('valorant', clip1.s3Path);
+            expect(entity.guid).toBe(clip1.guid);
+        });
+    });
 });

@@ -5,6 +5,7 @@ const client_dynamodb_1 = require("@aws-sdk/client-dynamodb");
 const util_dynamodb_1 = require("@aws-sdk/util-dynamodb");
 const _1 = require(".");
 const constants_1 = require("../constants");
+const dateUtils_1 = require("../utils/dateUtils");
 const dynamoUtils_1 = require("../utils/dynamoUtils");
 const logItUtils_1 = require("../utils/logItUtils");
 class ClipsRepository extends _1.Repository {
@@ -31,7 +32,7 @@ class ClipsRepository extends _1.Repository {
             ratedAtDate,
             usedInVideoAtDate,
             usedInShortAtDate,
-            createdAt: (0, dynamoUtils_1.dateEst)(),
+            createdAt: (0, dateUtils_1.dateEst)(),
         });
         const { $metadata } = await this.docClient
             .send(new client_dynamodb_1.PutItemCommand({
@@ -60,7 +61,7 @@ class ClipsRepository extends _1.Repository {
             ratedAtDate,
             usedInVideoAtDate,
             usedInShortAtDate,
-            updatedAt: (0, dynamoUtils_1.dateEst)(),
+            updatedAt: (0, dateUtils_1.dateEst)(),
         });
         const { $metadata } = await this.docClient
             .send(new client_dynamodb_1.PutItemCommand({
@@ -142,6 +143,9 @@ class ClipsRepository extends _1.Repository {
             }),
         }));
         return Items.map(util_dynamodb_1.unmarshall);
+    }
+    async getByS3Path(gameName, s3Path) {
+        return this.getByEquality(gameName, { s3Path }, true);
     }
 }
 exports.ClipsRepository = ClipsRepository;

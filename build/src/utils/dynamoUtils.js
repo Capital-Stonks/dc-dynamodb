@@ -1,21 +1,14 @@
 "use strict";
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.DateExpressionMapper = exports.getKeyConditionExpression = exports.getExpressionAttributeValues = exports.getExpressionAttributeNames = exports.getFilterExpression = exports.columnNameKeyValueMaps = exports.dateEst = exports.getSk = exports.preMarshallPrep = void 0;
-const constants_1 = require("../../constants");
-const moment_timezone_1 = __importDefault(require("moment-timezone"));
+exports.objectToExpressionAttributeValues = exports.objectToEqualityFilterExpression = exports.DateExpressionMapper = exports.getKeyConditionExpression = exports.getExpressionAttributeValues = exports.getExpressionAttributeNames = exports.getFilterExpression = exports.columnNameKeyValueMaps = exports.getSk = exports.preMarshallPrep = void 0;
+const constants_1 = require("../constants");
 const util_dynamodb_1 = require("@aws-sdk/util-dynamodb");
-const moment = moment_timezone_1.default;
 const preMarshallPrep = (obj) => {
     return Object.fromEntries(Object.entries(obj).filter(([_, v]) => v !== undefined));
 };
 exports.preMarshallPrep = preMarshallPrep;
 const getSk = (gameName, guid) => `${gameName}${constants_1.SK_SEPARATOR}${guid}`;
 exports.getSk = getSk;
-const dateEst = () => moment().tz('America/New_York').format('YYYY-MM-DD HH:mm:ss.SSS');
-exports.dateEst = dateEst;
 exports.columnNameKeyValueMaps = Object.freeze({
     ratedAtDate: {
         Name: `ratedAtDate`,
@@ -106,4 +99,19 @@ const DateExpressionMapper = (gameName, filter, expression, minimumRating, usedI
     KeyConditionExpression: (0, exports.getKeyConditionExpression)(gameName, filter, expression),
 });
 exports.DateExpressionMapper = DateExpressionMapper;
+const objectToEqualityFilterExpression = (object) => {
+    return Object.keys(object)
+        .map((key) => `${key} = :${key}`)
+        .join(' AND ');
+};
+exports.objectToEqualityFilterExpression = objectToEqualityFilterExpression;
+const objectToExpressionAttributeValues = (object) => {
+    return Object.entries(object).reduce((acc, [key, value]) => {
+        return {
+            ...acc,
+            [`:${key}`]: value,
+        };
+    }, {});
+};
+exports.objectToExpressionAttributeValues = objectToExpressionAttributeValues;
 //# sourceMappingURL=dynamoUtils.js.map
