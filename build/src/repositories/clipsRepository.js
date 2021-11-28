@@ -5,7 +5,7 @@ const client_dynamodb_1 = require("@aws-sdk/client-dynamodb");
 const util_dynamodb_1 = require("@aws-sdk/util-dynamodb");
 const _1 = require(".");
 const constants_1 = require("../constants");
-const dateUtils_1 = require("../utils/dateUtils");
+const clipEntityUtils_1 = require("../utils/clipEntityUtils");
 const dynamoUtils_1 = require("../utils/dynamoUtils");
 const logItUtils_1 = require("../utils/logItUtils");
 class ClipsRepository extends _1.Repository {
@@ -14,62 +14,25 @@ class ClipsRepository extends _1.Repository {
         this.tableName = `${config.envName}-clips`;
     }
     async create(createObject) {
-        const { gameName, s3Path, guid, username, source, sourceTitle, videoUrl, videoLength, sourceDescription, tags, duration, resolutionHeight, rating, ratedAtDate, usedInVideoAtDate, usedInShortAtDate, aggregatedAtDate, } = createObject;
-        const filteredPut = (0, dynamoUtils_1.preMarshallPrep)({
-            pk: gameName,
-            sk: (0, dynamoUtils_1.getSk)(gameName, guid),
-            s3Path,
-            guid,
-            aggregatedAtDate,
-            username,
-            source,
-            sourceTitle,
-            videoUrl,
-            videoLength,
-            sourceDescription,
-            tags,
-            duration,
-            resolutionHeight,
-            rating,
-            ratedAtDate,
-            usedInVideoAtDate,
-            usedInShortAtDate,
-            createdAt: (0, dateUtils_1.dateEst)(),
+        const preMarshalledClip = (0, clipEntityUtils_1.preMarshallClip)(createObject, {
+            isAddCreatedAt: true,
         });
         const { $metadata } = await this.docClient
             .send(new client_dynamodb_1.PutItemCommand({
             TableName: this.tableName,
-            Item: (0, util_dynamodb_1.marshall)(filteredPut),
+            Item: (0, util_dynamodb_1.marshall)(preMarshalledClip),
         }))
             .catch(logItUtils_1.logIt);
         return $metadata.httpStatusCode === 200;
     }
     async put(putObject) {
-        const { gameName, guid, username, s3Path, source, sourceTitle, videoUrl, sourceDescription, tags, duration, resolutionHeight, rating, ratedAtDate, usedInVideoAtDate, usedInShortAtDate, aggregatedAtDate, } = putObject;
-        const filteredPut = (0, dynamoUtils_1.preMarshallPrep)({
-            pk: gameName,
-            sk: (0, dynamoUtils_1.getSk)(gameName, guid),
-            guid,
-            s3Path,
-            username,
-            source,
-            sourceTitle,
-            videoUrl,
-            sourceDescription,
-            rating,
-            tags,
-            duration,
-            resolutionHeight,
-            aggregatedAtDate,
-            ratedAtDate,
-            usedInVideoAtDate,
-            usedInShortAtDate,
-            updatedAt: (0, dateUtils_1.dateEst)(),
+        const preMarshalledClip = (0, clipEntityUtils_1.preMarshallClip)(putObject, {
+            isAddUpdatedAt: true,
         });
         const { $metadata } = await this.docClient
             .send(new client_dynamodb_1.PutItemCommand({
             TableName: this.tableName,
-            Item: (0, util_dynamodb_1.marshall)(filteredPut),
+            Item: (0, util_dynamodb_1.marshall)(preMarshalledClip),
         }))
             .catch(logItUtils_1.logIt);
         return $metadata.httpStatusCode === 200;
