@@ -16,6 +16,7 @@ interface IClipPartial {
     tags?: string[];
     duration?: number;
     resolutionHeight?: number;
+    thumbnailS3Path?: string;
     updatedAt?: string;
 }
 

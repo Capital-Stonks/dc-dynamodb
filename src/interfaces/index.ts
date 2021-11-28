@@ -19,6 +19,7 @@ export interface IClip {
     guid: string;
     s3Path: string;
     createdAt: string;
+    thumbnailS3Path?: string;
     updatedAt?: string;
     username?: string;
     source?: string;
