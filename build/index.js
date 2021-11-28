@@ -28,4 +28,5 @@ exports.tagsRepo = new tagsRepository_1.TagsRepository({
 });
 __exportStar(require("./src/interfaces"), exports);
 __exportStar(require("./src/utils/clipEntityUtils"), exports);
+__exportStar(require("./src/utils/s3PathUtils"), exports);
 //# sourceMappingURL=index.js.map

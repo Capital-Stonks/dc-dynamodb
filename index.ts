@@ -18,3 +18,4 @@ export const tagsRepo = new TagsRepository({
 
 export * from './src/interfaces';
 export * from './src/utils/clipEntityUtils';
+export * from './src/utils/s3PathUtils';
