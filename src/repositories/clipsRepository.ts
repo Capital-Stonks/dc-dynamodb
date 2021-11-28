@@ -43,6 +43,7 @@ export class ClipsRepository extends Repository {
             usedInVideoAtDate,
             usedInShortAtDate,
             aggregatedAtDate,
+            thumbnailS3Path,
         } = createObject;
         const filteredPut = preMarshallPrep({
             pk: gameName,
@@ -63,6 +64,7 @@ export class ClipsRepository extends Repository {
             ratedAtDate,
             usedInVideoAtDate,
             usedInShortAtDate,
+            thumbnailS3Path,
             createdAt: dateEst(),
         });
 
@@ -95,6 +97,7 @@ export class ClipsRepository extends Repository {
             usedInVideoAtDate,
             usedInShortAtDate,
             aggregatedAtDate,
+            thumbnailS3Path,
         } = putObject;
         const filteredPut = preMarshallPrep({
             pk: gameName,
@@ -114,6 +117,7 @@ export class ClipsRepository extends Repository {
             ratedAtDate,
             usedInVideoAtDate,
             usedInShortAtDate,
+            thumbnailS3Path,
             updatedAt: dateEst(),
         });
 
