@@ -8,6 +8,7 @@ import { marshall, unmarshall } from '@aws-sdk/util-dynamodb';
 import { Repository, Comparator } from '.';
 import { DYNAMO_ENV_NAME } from '../constants';
 import { IClip, ICustomDateFilter } from '../interfaces';
+import { preMarshallClip } from '../utils/clipEntityUtils';
 import { dateEst } from '../utils/dateUtils';
 import {
     DateExpressionMapper,
@@ -25,52 +26,14 @@ export class ClipsRepository extends Repository {
     }
 
     async create(createObject: IClip): Promise<Boolean> {
-        const {
-            gameName,
-            s3Path,
-            guid,
-            username,
-            source,
-            sourceTitle,
-            sourceDescription,
-            videoUrl,
-            videoLength,
-            tags,
-            duration,
-            resolutionHeight,
-            rating,
-            ratedAtDate,
-            usedInVideoAtDate,
-            usedInShortAtDate,
-            aggregatedAtDate,
-        } = createObject;
-        const filteredPut = preMarshallPrep({
-            pk: gameName,
-            sk: getSk(gameName, guid),
-            s3Path,
-            guid,
-            aggregatedAtDate,
-            username,
-            source,
-            sourceTitle,
-            videoUrl,
-            videoLength,
-            sourceDescription,
-            tags,
-            duration,
-            resolutionHeight,
-            rating,
-            ratedAtDate,
-            usedInVideoAtDate,
-            usedInShortAtDate,
-            createdAt: dateEst(),
+        const preMarshalledClip = preMarshallClip(createObject, {
+            isAddCreatedAt: true,
         });
-
         const { $metadata } = await this.docClient
             .send(
                 new PutItemCommand({
                     TableName: this.tableName,
-                    Item: marshall(filteredPut),
+                    Item: marshall(preMarshalledClip),
                 })
             )
             .catch(logIt);
@@ -78,50 +41,14 @@ export class ClipsRepository extends Repository {
     }
 
     async put(putObject: IClip): Promise<Boolean> {
-        const {
-            gameName,
-            guid,
-            username,
-            s3Path,
-            source,
-            sourceTitle,
-            videoUrl,
-            sourceDescription,
-            tags,
-            duration,
-            resolutionHeight,
-            rating,
-            ratedAtDate,
-            usedInVideoAtDate,
-            usedInShortAtDate,
-            aggregatedAtDate,
-        } = putObject;
-        const filteredPut = preMarshallPrep({
-            pk: gameName,
-            sk: getSk(gameName, guid),
-            guid,
-            s3Path,
-            username,
-            source,
-            sourceTitle,
-            videoUrl,
-            sourceDescription,
-            rating,
-            tags,
-            duration,
-            resolutionHeight,
-            aggregatedAtDate,
-            ratedAtDate,
-            usedInVideoAtDate,
-            usedInShortAtDate,
-            updatedAt: dateEst(),
+        const preMarshalledClip = preMarshallClip(putObject, {
+            isAddUpdatedAt: true,
         });
-
         const { $metadata } = await this.docClient
             .send(
                 new PutItemCommand({
                     TableName: this.tableName,
-                    Item: marshall(filteredPut),
+                    Item: marshall(preMarshalledClip),
                 })
             )
             .catch(logIt);

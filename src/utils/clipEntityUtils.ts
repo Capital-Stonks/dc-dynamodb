@@ -1,6 +1,8 @@
 import { IClip } from '../interfaces';
 import { v4 } from 'uuid';
 import { createS3Path } from './s3PathUtils';
+import { dateEst } from './dateUtils';
+import { getSk, preMarshallPrep } from './dynamoUtils';
 
 interface IClipPartial {
     username?: string;
@@ -15,6 +17,8 @@ interface IClipPartial {
     tags?: string[];
     duration?: number;
     resolutionHeight?: number;
+    thumbnailS3Path?: string;
+    updatedAt?: string;
 }
 
 export const createClipEntity = (
@@ -27,7 +31,24 @@ export const createClipEntity = (
     return {
         guid,
         gameName,
+        createdAt: dateEst(),
         s3Path: createS3Path(folder, gameName, `${guid}.${fileExtension}`),
         ...columns,
     };
+};
+
+interface IOptions {
+    isAddCreatedAt?: boolean;
+    isAddUpdatedAt?: boolean;
+}
+
+export const preMarshallClip = (clip: IClip, options: IOptions) => {
+    const gameName = clip.gameName || clip.pk;
+    return preMarshallPrep({
+        pk: gameName,
+        sk: getSk(gameName, clip.guid),
+        ...(options.isAddCreatedAt && { createdAt: dateEst() }),
+        ...(options.isAddUpdatedAt && { updatedAt: dateEst() }),
+        ...clip,
+    });
 };

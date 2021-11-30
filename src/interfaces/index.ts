@@ -15,9 +15,14 @@ export interface IGetClip {
 }
 
 export interface IClip {
-    gameName: string;
+    pk?: string;
+    sk?: string;
+    gameName?: string;
     guid: string;
     s3Path: string;
+    createdAt: string;
+    thumbnailS3Path?: string;
+    updatedAt?: string;
     username?: string;
     source?: string;
     sourceTitle?: string;
