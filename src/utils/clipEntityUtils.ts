@@ -34,6 +34,7 @@ export const createClipEntity = (
         createdAt: dateEst(),
         s3Path: createS3Path(folder, gameName, `${guid}.${fileExtension}`),
         ...columns,
+        aggregatedAtDate: dateEst(),
     };
 };
 
