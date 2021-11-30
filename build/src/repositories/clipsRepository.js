@@ -14,7 +14,7 @@ class ClipsRepository extends _1.Repository {
         this.tableName = `${config.envName}-clips`;
     }
     async create(createObject) {
-        const { gameName, s3Path, guid, username, source, sourceTitle, sourceDescription, tags, duration, resolutionHeight, rating, ratedAtDate, usedInVideoAtDate, usedInShortAtDate, aggregatedAtDate, } = createObject;
+        const { gameName, s3Path, guid, username, source, sourceTitle, videoUrl, videoLength, sourceDescription, tags, duration, resolutionHeight, rating, ratedAtDate, usedInVideoAtDate, usedInShortAtDate, aggregatedAtDate, } = createObject;
         const filteredPut = (0, dynamoUtils_1.preMarshallPrep)({
             pk: gameName,
             sk: (0, dynamoUtils_1.getSk)(gameName, guid),
@@ -24,6 +24,8 @@ class ClipsRepository extends _1.Repository {
             username,
             source,
             sourceTitle,
+            videoUrl,
+            videoLength,
             sourceDescription,
             tags,
             duration,
@@ -43,7 +45,7 @@ class ClipsRepository extends _1.Repository {
         return $metadata.httpStatusCode === 200;
     }
     async put(putObject) {
-        const { gameName, guid, username, s3Path, source, sourceTitle, sourceDescription, tags, duration, resolutionHeight, rating, ratedAtDate, usedInVideoAtDate, usedInShortAtDate, aggregatedAtDate, } = putObject;
+        const { gameName, guid, username, s3Path, source, sourceTitle, videoUrl, sourceDescription, tags, duration, resolutionHeight, rating, ratedAtDate, usedInVideoAtDate, usedInShortAtDate, aggregatedAtDate, } = putObject;
         const filteredPut = (0, dynamoUtils_1.preMarshallPrep)({
             pk: gameName,
             sk: (0, dynamoUtils_1.getSk)(gameName, guid),
@@ -52,6 +54,7 @@ class ClipsRepository extends _1.Repository {
             username,
             source,
             sourceTitle,
+            videoUrl,
             sourceDescription,
             rating,
             tags,
