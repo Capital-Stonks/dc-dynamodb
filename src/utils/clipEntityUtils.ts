@@ -26,12 +26,9 @@ export const createClipEntity = (
     folder: string,
     columns: IClipPartial,
     fileExtension = 'mp4',
-    guid = '',
+    guid = v4(),
     s3Path = undefined,
 ): IClip => {
-    if (guid === '') {
-        guid = v4();
-    }
     return {
         guid,
         gameName,
