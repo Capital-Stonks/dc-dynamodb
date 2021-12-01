@@ -25,14 +25,15 @@ export const createClipEntity = (
     gameName: string,
     folder: string,
     columns: IClipPartial,
-    fileExtension = 'mp4'
+    fileExtension = 'mp4',
+    guid = v4(),
+    s3Path = undefined,
 ): IClip => {
-    const guid = v4();
     return {
         guid,
         gameName,
         createdAt: dateEst(),
-        s3Path: createS3Path(folder, gameName, `${guid}.${fileExtension}`),
+        s3Path: s3Path || createS3Path(gameName, folder, guid, fileExtension),
         ...columns,
         aggregatedAtDate: dateEst(),
     };
