@@ -7,10 +7,12 @@ export const tagMap = {
         'high skill',
         'smart / creative',
         'clutch',
-        'teamwork',
+
         'wtf',
+        'copyrighted',
     ],
     genre: {
+        teamBased: ['teamwork'],
         shooter: [
             'flick',
             'headshot',

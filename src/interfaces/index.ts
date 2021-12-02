@@ -31,6 +31,8 @@ export interface IClip {
     sourceDescription?: string;
     rating?: number;
     ratedAtDate?: string;
+    usedInVideos?: string[];
+    usedInShort?: string;
     usedInVideoAtDate?: string;
     usedInShortAtDate?: string;
     aggregatedAtDate?: string;
