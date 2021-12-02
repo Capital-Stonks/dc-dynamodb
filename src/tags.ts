@@ -43,7 +43,7 @@ export const tagMap = {
             'char.viper',
             'char.yoru',
         ],
-        apex: [
+        'apex-legends': [
             'movement',
             'arenas',
             '1v3',
@@ -65,6 +65,6 @@ export const tagMap = {
             'char.rampart',
             'char.horizon',
         ],
-        halo: [],
+        'halo-infinite': [],
     },
 };
