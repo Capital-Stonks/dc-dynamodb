@@ -62,3 +62,13 @@ export interface IGetTags {
     gameName: string;
     sk: string;
 }
+
+export interface ITags {
+    global: string[];
+    genre: {
+        [genreName: string]: string[];
+    };
+    game: {
+        [gameName: string]: string[];
+    };
+}
