@@ -9,12 +9,7 @@ import { Repository, Comparator } from '.';
 import { DYNAMO_ENV_NAME } from '../constants';
 import { IClip, ICustomDateFilter } from '../interfaces';
 import { preMarshallClip } from '../utils/clipEntityUtils';
-import { dateEst } from '../utils/dateUtils';
-import {
-    DateExpressionMapper,
-    getSk,
-    preMarshallPrep,
-} from '../utils/dynamoUtils';
+import { DateExpressionMapper, getSk } from '../utils/dynamoUtils';
 import { logIt } from '../utils/logItUtils';
 
 export class ClipsRepository extends Repository {

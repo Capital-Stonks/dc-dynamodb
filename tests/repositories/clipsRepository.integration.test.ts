@@ -1,3 +1,4 @@
+import { IClip } from '../../src/interfaces';
 import { ClipsRepository } from '../../src/repositories/clipsRepository';
 import { clipFactory } from '../factory';
 
@@ -14,9 +15,9 @@ describe('clipsRepository', () => {
     const clipRepo = new ClipsRepository();
 
     beforeAll(async () => {
-        await clipRepo.create(clip1);
-        await clipRepo.create(clip2);
-        await clipRepo.create(clip3);
+        await clipRepo.create(clip1 as Clip);
+        await clipRepo.create(clip2 as IClip);
+        await clipRepo.create(clip3 as IClip);
     });
 
     afterAll(async () => {

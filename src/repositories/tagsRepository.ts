@@ -9,9 +9,9 @@ interface IGetResponse {
 }
 
 export class TagsRepository extends Repository {
-    constructor({ region = 'us-east-2', envName = DYNAMO_ENV_NAME }) {
-        super({ region, envName: EnvName.DEV });
-        this.tableName = `${envName}-tags`;
+    constructor(config = { region: 'us-east-2', envName: DYNAMO_ENV_NAME }) {
+        super(config);
+        this.tableName = `${config.envName}-tags`;
     }
 
     async put({ pk, tags }: IPutTags) {
