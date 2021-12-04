@@ -10,7 +10,8 @@ const createClipEntity = (gameName, folder, columns, fileExtension = 'mp4', guid
         guid,
         gameName,
         createdAt: (0, dateUtils_1.dateEst)(),
-        s3Path: s3Path || (0, s3PathUtils_1.createS3Path)(gameName, folder, guid, fileExtension),
+        s3Path: s3Path ||
+            (0, s3PathUtils_1.createS3Path)(folder, gameName, `${guid}.${fileExtension}`),
         ...columns,
         aggregatedAtDate: (0, dateUtils_1.dateEst)(),
     };
