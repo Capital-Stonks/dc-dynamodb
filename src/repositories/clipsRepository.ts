@@ -24,13 +24,13 @@ export class ClipsRepository extends Repository {
         const preMarshalledClip = preMarshallClip(createObject, {
             isAddCreatedAt: true,
         });
+        const query = {
+            TableName: this.tableName,
+            Item: marshall(preMarshalledClip),
+        };
+        console.log('createQuery>', query);
         const { $metadata } = await this.docClient
-            .send(
-                new PutItemCommand({
-                    TableName: this.tableName,
-                    Item: marshall(preMarshalledClip),
-                })
-            )
+            .send(new PutItemCommand(query))
             .catch(logIt);
         return $metadata.httpStatusCode === 200;
     }
@@ -39,35 +39,37 @@ export class ClipsRepository extends Repository {
         const preMarshalledClip = preMarshallClip(putObject, {
             isAddUpdatedAt: true,
         });
+        const query = {
+            TableName: this.tableName,
+            Item: marshall(preMarshalledClip),
+        };
+        console.log('putQuery>', query);
         const { $metadata } = await this.docClient
-            .send(
-                new PutItemCommand({
-                    TableName: this.tableName,
-                    Item: marshall(preMarshalledClip),
-                })
-            )
+            .send(new PutItemCommand(query))
             .catch(logIt);
         return $metadata.httpStatusCode === 200;
     }
 
     async delete(gameName, guid): Promise<Boolean> {
+        const query = {
+            TableName: this.tableName,
+            Key: marshall({ pk: gameName, sk: getSk(gameName, guid) }),
+        };
+        console.log('deleteQuery>', query);
         const { $metadata } = await this.docClient.send(
-            new DeleteItemCommand({
-                TableName: this.tableName,
-                Key: marshall({ pk: gameName, sk: getSk(gameName, guid) }),
-            })
+            new DeleteItemCommand(query)
         );
         return $metadata.httpStatusCode === 200;
     }
 
     async get(gameName, guid): Promise<IClip | null> {
+        const query = {
+            TableName: this.tableName,
+            Key: marshall({ pk: gameName, sk: getSk(gameName, guid) }),
+        };
+        console.log('getQuery>', query);
         const { Item } = await this.docClient
-            .send(
-                new GetItemCommand({
-                    TableName: this.tableName,
-                    Key: marshall({ pk: gameName, sk: getSk(gameName, guid) }),
-                })
-            )
+            .send(new GetItemCommand(query))
             .catch(logIt);
         if (!Item) {
             console.log('No records returned for', getSk(gameName, guid));
@@ -108,51 +110,51 @@ export class ClipsRepository extends Repository {
             includeUsedInVideo,
             includeUsedInShort
         );
+        const query = {
+            TableName: this.tableName,
+            ScanIndexForward: true,
+            KeyConditionExpression,
+            FilterExpression,
+            ExpressionAttributeNames,
+            ExpressionAttributeValues,
+        };
+        console.log('getByCustomDateQuery>', query);
         const { Items } = await this.docClient
-            .send(
-                new QueryCommand({
-                    TableName: this.tableName,
-                    ScanIndexForward: true,
-                    KeyConditionExpression,
-                    FilterExpression,
-                    ExpressionAttributeNames,
-                    ExpressionAttributeValues,
-                })
-            )
+            .send(new QueryCommand(query))
             .catch(logIt);
         return unmarshall(Items);
     }
 
     async getByFolder(folder: string, gameName: string): Promise<IClip[]> {
+        const query = {
+            TableName: this.tableName,
+            ScanIndexForward: true,
+            KeyConditionExpression: 'pk = :pk',
+            FilterExpression: `contains(s3Path, :folder)`,
+            ExpressionAttributeValues: marshall({
+                ':pk': gameName,
+                ':folder': folder,
+            }),
+        };
+        console.log('getByFolderQuery>', query);
         const { Items } = await this.docClient
-            .send(
-                new QueryCommand({
-                    TableName: this.tableName,
-                    ScanIndexForward: true,
-                    KeyConditionExpression: 'pk = :pk',
-                    FilterExpression: `contains(s3Path, :folder)`,
-                    ExpressionAttributeValues: marshall({
-                        ':pk': gameName,
-                        ':folder': folder,
-                    }),
-                })
-            )
+            .send(new QueryCommand(query))
             .catch(logIt);
         return Items.map(unmarshall);
     }
 
     async getUsedInShort(gameName: string): Promise<IClip[]> {
-        const { Items } = await this.docClient.send(
-            new QueryCommand({
-                TableName: this.tableName,
-                ScanIndexForward: true,
-                KeyConditionExpression: 'pk = :pk',
-                FilterExpression: `attribute_exists(usedInShortAtDate)`,
-                ExpressionAttributeValues: marshall({
-                    ':pk': gameName,
-                }),
-            })
-        );
+        const query = {
+            TableName: this.tableName,
+            ScanIndexForward: true,
+            KeyConditionExpression: 'pk = :pk',
+            FilterExpression: `attribute_exists(usedInShortAtDate)`,
+            ExpressionAttributeValues: marshall({
+                ':pk': gameName,
+            }),
+        };
+        console.log('getUsedInShortQuery>', query);
+        const { Items } = await this.docClient.send(new QueryCommand(query));
         return Items.map(unmarshall);
     }
 
