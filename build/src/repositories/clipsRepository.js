@@ -98,7 +98,7 @@ class ClipsRepository extends _1.Repository {
             TableName: this.tableName,
             ScanIndexForward: true,
             KeyConditionExpression: 'pk = :pk',
-            FilterExpression: `contains(s3Path, :folder)`,
+            FilterExpression: `begins_with(s3Path, :folder)`,
             ExpressionAttributeValues: (0, util_dynamodb_1.marshall)({
                 ':pk': gameName,
                 ':folder': folder,

@@ -130,7 +130,7 @@ export class ClipsRepository extends Repository {
             TableName: this.tableName,
             ScanIndexForward: true,
             KeyConditionExpression: 'pk = :pk',
-            FilterExpression: `contains(s3Path, :folder)`,
+            FilterExpression: `begins_with(s3Path, :folder)`,
             ExpressionAttributeValues: marshall({
                 ':pk': gameName,
                 ':folder': folder,
