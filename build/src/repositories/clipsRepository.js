@@ -17,11 +17,13 @@ class ClipsRepository extends _1.Repository {
         const preMarshalledClip = (0, clipEntityUtils_1.preMarshallClip)(createObject, {
             isAddCreatedAt: true,
         });
-        const { $metadata } = await this.docClient
-            .send(new client_dynamodb_1.PutItemCommand({
+        const query = {
             TableName: this.tableName,
             Item: (0, util_dynamodb_1.marshall)(preMarshalledClip),
-        }))
+        };
+        console.log('createQuery>', query);
+        const { $metadata } = await this.docClient
+            .send(new client_dynamodb_1.PutItemCommand(query))
             .catch(logItUtils_1.logIt);
         return $metadata.httpStatusCode === 200;
     }
@@ -29,27 +31,33 @@ class ClipsRepository extends _1.Repository {
         const preMarshalledClip = (0, clipEntityUtils_1.preMarshallClip)(putObject, {
             isAddUpdatedAt: true,
         });
-        const { $metadata } = await this.docClient
-            .send(new client_dynamodb_1.PutItemCommand({
+        const query = {
             TableName: this.tableName,
             Item: (0, util_dynamodb_1.marshall)(preMarshalledClip),
-        }))
+        };
+        console.log('putQuery>', query);
+        const { $metadata } = await this.docClient
+            .send(new client_dynamodb_1.PutItemCommand(query))
             .catch(logItUtils_1.logIt);
         return $metadata.httpStatusCode === 200;
     }
     async delete(gameName, guid) {
-        const { $metadata } = await this.docClient.send(new client_dynamodb_1.DeleteItemCommand({
+        const query = {
             TableName: this.tableName,
             Key: (0, util_dynamodb_1.marshall)({ pk: gameName, sk: (0, dynamoUtils_1.getSk)(gameName, guid) }),
-        }));
+        };
+        console.log('deleteQuery>', query);
+        const { $metadata } = await this.docClient.send(new client_dynamodb_1.DeleteItemCommand(query));
         return $metadata.httpStatusCode === 200;
     }
     async get(gameName, guid) {
-        const { Item } = await this.docClient
-            .send(new client_dynamodb_1.GetItemCommand({
+        const query = {
             TableName: this.tableName,
             Key: (0, util_dynamodb_1.marshall)({ pk: gameName, sk: (0, dynamoUtils_1.getSk)(gameName, guid) }),
-        }))
+        };
+        console.log('getQuery>', query);
+        const { Item } = await this.docClient
+            .send(new client_dynamodb_1.GetItemCommand(query))
             .catch(logItUtils_1.logIt);
         if (!Item) {
             console.log('No records returned for', (0, dynamoUtils_1.getSk)(gameName, guid));
@@ -71,21 +79,22 @@ class ClipsRepository extends _1.Repository {
     async getByCustomDate(gameName, filter, comparator, //todo this and filter can be combined in an obj, and rating can have its own comparator too
     minimumRating = 7, includeUsedInVideo = false, includeUsedInShort = false) {
         const { FilterExpression, ExpressionAttributeNames, ExpressionAttributeValues, KeyConditionExpression, } = (0, dynamoUtils_1.DateExpressionMapper)(gameName, filter, comparator, minimumRating, includeUsedInVideo, includeUsedInShort);
-        const { Items } = await this.docClient
-            .send(new client_dynamodb_1.QueryCommand({
+        const query = {
             TableName: this.tableName,
             ScanIndexForward: true,
             KeyConditionExpression,
             FilterExpression,
             ExpressionAttributeNames,
             ExpressionAttributeValues,
-        }))
+        };
+        console.log('getByCustomDateQuery>', query);
+        const { Items } = await this.docClient
+            .send(new client_dynamodb_1.QueryCommand(query))
             .catch(logItUtils_1.logIt);
         return (0, util_dynamodb_1.unmarshall)(Items);
     }
     async getByFolder(folder, gameName) {
-        const { Items } = await this.docClient
-            .send(new client_dynamodb_1.QueryCommand({
+        const query = {
             TableName: this.tableName,
             ScanIndexForward: true,
             KeyConditionExpression: 'pk = :pk',
@@ -94,12 +103,15 @@ class ClipsRepository extends _1.Repository {
                 ':pk': gameName,
                 ':folder': folder,
             }),
-        }))
+        };
+        console.log('getByFolderQuery>', query);
+        const { Items } = await this.docClient
+            .send(new client_dynamodb_1.QueryCommand(query))
             .catch(logItUtils_1.logIt);
         return Items.map(util_dynamodb_1.unmarshall);
     }
     async getUsedInShort(gameName) {
-        const { Items } = await this.docClient.send(new client_dynamodb_1.QueryCommand({
+        const query = {
             TableName: this.tableName,
             ScanIndexForward: true,
             KeyConditionExpression: 'pk = :pk',
@@ -107,7 +119,9 @@ class ClipsRepository extends _1.Repository {
             ExpressionAttributeValues: (0, util_dynamodb_1.marshall)({
                 ':pk': gameName,
             }),
-        }));
+        };
+        console.log('getUsedInShortQuery>', query);
+        const { Items } = await this.docClient.send(new client_dynamodb_1.QueryCommand(query));
         return Items.map(util_dynamodb_1.unmarshall);
     }
     async getByS3Path(gameName, s3Path) {

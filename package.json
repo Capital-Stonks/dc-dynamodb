@@ -11,7 +11,8 @@
         "dev": "cross-env NODE_ENV=development node --inspect=0.0.0.0:9245 ./node_modules/serverless/bin/serverless.js offline --config dev.serverless.yaml -s dev",
         "dev-2": "serverless offline --config dev.serverless.yaml start",
         "test": "cross-env NODE_ENV=development node --inspect=0.0.0.0:9232 ./node_modules/jest/bin/jest.js --runInBand --forceExit",
-        "test-integration": "cross-env NODE_ENV=development node --inspect=0.0.0.0:9232 ./node_modules/jest/bin/jest.js -c jest-integration.config.js --runInBand --forceExit"
+        "test-integration": "cross-env NODE_ENV=development node --inspect=0.0.0.0:9232 ./node_modules/jest/bin/jest.js -c jest-integration.config.js --runInBand --forceExit",
+        "prepare": "husky install"
     },
     "repository": {
         "type": "git",
@@ -28,6 +29,7 @@
         "@aws-sdk/lib-dynamodb": "^3.41.0",
         "@aws-sdk/util-dynamodb": "^3.41.0",
         "aws-sdk": "^2.1028.0",
+        "build": "^0.1.4",
         "cross-env": "^7.0.3",
         "dotenv": "^10.0.0",
         "moment": "^2.29.1",
