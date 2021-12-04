@@ -1,17 +1,18 @@
 import { IClip } from '../../src/interfaces';
 import { ClipsRepository } from '../../src/repositories/clipsRepository';
 import { clipFactory } from '../factory';
+import { IClip } from '../../src/interfaces';
 
 describe('clipsRepository', () => {
     const clip1 = clipFactory({
         s3Path: 'folder1/valorant/file1',
         usedInShortAtDate: undefined,
-    });
+    }) as IClip;
     const clip2 = clipFactory({
         s3Path: 'folder2/valorant/file2',
         usedInShortAtDate: undefined,
-    });
-    const clip3 = clipFactory({ s3Path: 'folder3/valorant/file3' });
+    }) as IClip;
+    const clip3 = clipFactory({ s3Path: 'folder3/valorant/file3' }) as IClip;
     const clipRepo = new ClipsRepository();
 
     beforeAll(async () => {

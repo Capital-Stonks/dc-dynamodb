@@ -133,28 +133,6 @@ describe('clipsDataStoreUtils', () => {
     });
 
     describe('moveClip', () => {
-        const clip2 = {
-            bitrate: 1569277,
-            rating: 0,
-            aggregatedAtDate: '2021-12-03 12:59:44.479',
-            createdAt: '2021-12-03 12:59:44.478',
-            resolutionHeight: 720,
-            source: 'twitter',
-            sourceDescription:
-                'Nats ACE with Viper Ult!\n' +
-                'Gambit vs. Team Secret is close! \n' +
-                '#VALORANTChampions #VALORANT #VCT #Nats #teamsecret #valorantclips https://t.co/WwD3TphNO0',
-            gameName: 'valorant',
-            guid: '03e3a1f6-87b6-41b1-a550-6eb33040f556',
-            sk: 'valorant#03e3a1f6-87b6-41b1-a550-6eb33040f556',
-            username: 'ValorantSource',
-            pk: 'valorant',
-            duration: 12.780013,
-            tags: ['char.viper', 'ult', 'ace'],
-            review: 'Yes',
-            s3Path: 'valorant/unreviewed-clips/mp4/cee86a93-87ec-4e6f-973b-0e8de4bfba81',
-        } as unknown as IClip;
-
         const clip = {
             gameName: 'valorant',
             guid: v4(),
@@ -191,14 +169,13 @@ describe('clipsDataStoreUtils', () => {
         });
 
         test('moves s3 objects and updates dynamo entry', async () => {
-            const movedClip = await clipsDataStore.moveClip(
-                clip2,
-                'new-folder'
-            );
+            const movedClip = await clipsDataStore.moveClip(clip, 'new-folder');
+            console.log(movedClip);
 
             expect(movedClip.s3Path).toBe('new-folder/valorant/move-me!');
 
             const s3Object = await s3Util.getObject(movedClip.s3Path);
+            console.log(s3Object);
 
             expect(s3Object).toBeTruthy();
 
