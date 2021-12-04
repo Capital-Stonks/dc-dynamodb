@@ -1,8 +1,12 @@
 import { PutItemCommand, GetItemCommand } from '@aws-sdk/client-dynamodb';
 import { marshall, unmarshall } from '@aws-sdk/util-dynamodb';
-import { EnvName, IGetTags, IPutTags } from '../interfaces';
+import { EnvName, IGetTags, IPutTags, ITags } from '../interfaces';
 import { Repository } from '.';
 import { DYNAMO_ENV_NAME } from '../constants';
+
+interface IGetResponse {
+    tags: ITags;
+}
 
 export class TagsRepository extends Repository {
     constructor({ region = 'us-east-2', envName = DYNAMO_ENV_NAME }) {
@@ -25,7 +29,7 @@ export class TagsRepository extends Repository {
         return res?.$metadata.httpStatusCode === 200;
     }
 
-    async get() {
+    async get(): Promise<IGetResponse> {
         const { Item } = await this.docClient
             .send(
                 new GetItemCommand({
@@ -39,6 +43,6 @@ export class TagsRepository extends Repository {
                 console.log(e);
                 return e;
             });
-        return unmarshall(Item);
+        return unmarshall(Item) as IGetResponse;
     }
 }

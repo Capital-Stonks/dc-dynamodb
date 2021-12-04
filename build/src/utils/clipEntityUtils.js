@@ -5,14 +5,15 @@ const uuid_1 = require("uuid");
 const s3PathUtils_1 = require("./s3PathUtils");
 const dateUtils_1 = require("./dateUtils");
 const dynamoUtils_1 = require("./dynamoUtils");
-const createClipEntity = (gameName, folder, columns, fileExtension = 'mp4') => {
-    const guid = (0, uuid_1.v4)();
+const createClipEntity = (gameName, folder, columns, fileExtension = 'mp4', guid = (0, uuid_1.v4)(), s3Path = undefined) => {
     return {
         guid,
         gameName,
         createdAt: (0, dateUtils_1.dateEst)(),
-        s3Path: (0, s3PathUtils_1.createS3Path)(folder, gameName, `${guid}.${fileExtension}`),
+        s3Path: s3Path ||
+            (0, s3PathUtils_1.createS3Path)(folder, gameName, `${guid}.${fileExtension}`),
         ...columns,
+        aggregatedAtDate: (0, dateUtils_1.dateEst)(),
     };
 };
 exports.createClipEntity = createClipEntity;
