@@ -13,6 +13,7 @@ interface IClipPartial {
     ratedAtDate?: string;
     usedInVideoAtDate?: string;
     usedInShortAtDate?: string;
+    shortS3Path?: string;
     aggregatedAtDate?: string;
     tags?: string[];
     duration?: number;
