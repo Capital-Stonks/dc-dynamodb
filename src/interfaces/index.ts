@@ -36,6 +36,7 @@ export interface IClip {
     usedInVideoAtDate?: string;
     usedInShortAtDate?: string;
     shortS3Path?: string;
+    originalClipS3Path?: string;
     aggregatedAtDate?: string;
     tags?: string[];
     duration?: number;
