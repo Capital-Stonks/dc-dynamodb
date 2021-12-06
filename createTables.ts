@@ -9,6 +9,6 @@ export const conditionallyCreateDevTables = async () => {
     const created = await Promise.allSettled([
         db.createTable(clipsTableSchema(DEV_ENV)),
         db.createTable(tagsTableSchema(DEV_ENV)),
-    ]);
+    ]).catch(() => {});
     console.log(created);
 };
