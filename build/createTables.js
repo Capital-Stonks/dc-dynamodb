@@ -7,14 +7,11 @@ const DEV_ENV = 'development';
 const conditionallyCreateDevTables = async () => {
     const clipsRepo = new clipsRepository_1.ClipsRepository();
     const db = clipsRepo.client;
-    const { TableNames: createdTables } = await db.listTables().promise();
-    if (Object.keys(createdTables).length === 0) {
-        const created = await Promise.allSettled([
-            db.createTable((0, schema_1.clipsTableSchema)(DEV_ENV)),
-            db.createTable((0, schema_1.tagsTableSchema)(DEV_ENV)),
-        ]);
-        console.log(created);
-    }
+    const created = await Promise.allSettled([
+        db.createTable((0, schema_1.clipsTableSchema)(DEV_ENV)),
+        db.createTable((0, schema_1.tagsTableSchema)(DEV_ENV)),
+    ]);
+    console.log(created);
 };
 exports.conditionallyCreateDevTables = conditionallyCreateDevTables;
 //# sourceMappingURL=createTables.js.map
