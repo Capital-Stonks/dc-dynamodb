@@ -1,17 +1,17 @@
 import { PutItemCommand, GetItemCommand } from '@aws-sdk/client-dynamodb';
 import { marshall, unmarshall } from '@aws-sdk/util-dynamodb';
-import { EnvName, IGetTags, IPutTags, ITags } from '../interfaces';
+import { IPutTags, ITags } from '../interfaces';
 import { Repository } from '.';
-import { DYNAMO_ENV_NAME } from '../constants';
+import { NODE_ENV } from '../constants';
 
 interface IGetResponse {
     tags: ITags;
 }
 
 export class TagsRepository extends Repository {
-    constructor(config = { region: 'us-east-2', envName: DYNAMO_ENV_NAME }) {
-        super(config);
-        this.tableName = `${config.envName}-tags`;
+    constructor() {
+        super();
+        this.tableName = `${NODE_ENV}-tags`;
     }
 
     async put({ pk, tags }: IPutTags) {

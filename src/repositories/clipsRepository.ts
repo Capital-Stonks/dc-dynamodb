@@ -6,7 +6,7 @@ import {
 } from '@aws-sdk/client-dynamodb';
 import { marshall, unmarshall } from '@aws-sdk/util-dynamodb';
 import { Repository, Comparator } from '.';
-import { DYNAMO_ENV_NAME } from '../constants';
+import { NODE_ENV } from '../constants';
 import { IClip, ICustomDateFilter } from '../interfaces';
 import { preMarshallClip } from '../utils/clipEntityUtils';
 import { DateExpressionMapper, getSk } from '../utils/dynamoUtils';
@@ -15,9 +15,9 @@ import { logIt } from '../utils/logItUtils';
 export class ClipsRepository extends Repository {
     public static gsi = 'ratedAtDate-index';
 
-    constructor(config = { region: 'us-east-2', envName: DYNAMO_ENV_NAME }) {
-        super(config);
-        this.tableName = `${config.envName}-clips`;
+    constructor() {
+        super();
+        this.tableName = `${NODE_ENV}-clips`;
     }
 
     async create(createObject: IClip): Promise<Boolean> {

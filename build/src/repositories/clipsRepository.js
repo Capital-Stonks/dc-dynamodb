@@ -9,9 +9,9 @@ const clipEntityUtils_1 = require("../utils/clipEntityUtils");
 const dynamoUtils_1 = require("../utils/dynamoUtils");
 const logItUtils_1 = require("../utils/logItUtils");
 class ClipsRepository extends _1.Repository {
-    constructor(config = { region: 'us-east-2', envName: constants_1.DYNAMO_ENV_NAME }) {
-        super(config);
-        this.tableName = `${config.envName}-clips`;
+    constructor() {
+        super();
+        this.tableName = `${constants_1.NODE_ENV}-clips`;
     }
     async create(createObject) {
         const preMarshalledClip = (0, clipEntityUtils_1.preMarshallClip)(createObject, {

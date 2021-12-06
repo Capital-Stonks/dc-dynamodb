@@ -2,7 +2,7 @@ import { DynamoDB, QueryCommand } from '@aws-sdk/client-dynamodb';
 import { IDynamoConfig } from '../interfaces';
 import { translateConfig } from '../utils/translateConfig';
 import { DynamoDBDocumentClient } from '@aws-sdk/lib-dynamodb';
-import { DYNAMO_ENV_NAME } from '../constants';
+import { DYNAMO_CONFIG } from '../constants';
 import { marshall, unmarshall } from '@aws-sdk/util-dynamodb';
 import { logIt } from '../utils/logItUtils';
 import {
@@ -25,16 +25,12 @@ export class Repository {
     public tableName;
     public Comparator = Comparator;
 
-    constructor({
-        region = 'us-east-2',
-        envName = DYNAMO_ENV_NAME,
-    }: IDynamoConfig) {
-        this.client = new DynamoDB({ region });
+    constructor() {
+        this.client = new DynamoDB(DYNAMO_CONFIG);
         this.docClient = DynamoDBDocumentClient.from(
             this.client,
             translateConfig
         );
-        this.envName = envName;
     }
 
     async getByEquality(

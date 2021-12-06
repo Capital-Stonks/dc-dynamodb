@@ -7,15 +7,9 @@ const schema_1 = require("./src/schema");
 const tags_1 = require("./src/tags");
 // this file is just to run a one time migration to get the tables into aws
 const environment = constants_1.DYNAMO_ENV_NAME;
-const clipsRepo = new clipsRepository_1.ClipsRepository({
-    region: 'us-east-2',
-    envName: environment,
-});
+const clipsRepo = new clipsRepository_1.ClipsRepository();
 const db = clipsRepo.client;
-const tagsRepo = new tagsRepository_1.TagsRepository({
-    region: 'us-east-2',
-    envName: environment,
-});
+const tagsRepo = new tagsRepository_1.TagsRepository();
 const CREATE_TABLES = true;
 // dont set to true unless you want to delete the tables
 const DELETE_TABLES = false;

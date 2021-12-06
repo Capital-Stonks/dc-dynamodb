@@ -23,7 +23,7 @@ exports.deleteObject = exports.createOptions = exports.putObjectFromFile = expor
 const fs = __importStar(require("fs"));
 const AWS = __importStar(require("aws-sdk"));
 const constants_1 = require("../constants");
-exports.s3 = new AWS.S3();
+exports.s3 = new AWS.S3(constants_1.S3_CONFIG);
 const createPresignedUrls = (s3Objects) => s3Objects.map(exports.createPresignedUrl);
 exports.createPresignedUrls = createPresignedUrls;
 const createPresignedUrl = (s3Object) => {

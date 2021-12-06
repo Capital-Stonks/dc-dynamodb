@@ -1,8 +1,8 @@
 import * as fs from 'fs';
 import * as AWS from 'aws-sdk';
-import { BUCKET_NAME } from '../constants';
+import { BUCKET_NAME, S3_CONFIG } from '../constants';
 
-export const s3 = new AWS.S3();
+export const s3 = new AWS.S3(S3_CONFIG);
 
 export const createPresignedUrls = (s3Objects) =>
     s3Objects.map(createPresignedUrl);

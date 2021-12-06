@@ -1,8 +1,10 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.SK_SEPARATOR = exports.BUCKET_NAME = exports.DYNAMO_ENV_NAME = exports.AWS_REGION = exports.IS_DEVELOPMENT = exports.NODE_ENV = void 0;
+exports.SK_SEPARATOR = exports.BUCKET_NAME = exports.DYNAMO_ENV_NAME = exports.AWS_REGION = exports.IS_DEVELOPMENT = exports.NODE_ENV = exports.S3_CONFIG = exports.DYNAMO_CONFIG = void 0;
 const interfaces_1 = require("../interfaces");
 require('dotenv').config();
+// @ts-ignore
+exports.DYNAMO_CONFIG = process.DYNAMO_CONFIG, exports.S3_CONFIG = process.S3_CONFIG;
 exports.NODE_ENV = process.env.NODE_ENV;
 exports.IS_DEVELOPMENT = exports.NODE_ENV === 'development';
 exports.AWS_REGION = 'us-east-2';

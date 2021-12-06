@@ -18,11 +18,10 @@ var Comparator;
     Comparator["between"] = "BETWEEN";
 })(Comparator = exports.Comparator || (exports.Comparator = {}));
 class Repository {
-    constructor({ region = 'us-east-2', envName = constants_1.DYNAMO_ENV_NAME, }) {
+    constructor() {
         this.Comparator = Comparator;
-        this.client = new client_dynamodb_1.DynamoDB({ region });
+        this.client = new client_dynamodb_1.DynamoDB(constants_1.DYNAMO_CONFIG);
         this.docClient = lib_dynamodb_1.DynamoDBDocumentClient.from(this.client, translateConfig_1.translateConfig);
-        this.envName = envName;
     }
     async getByEquality(pk, equalityConditions, isReturnOne = false) {
         const { Items } = await this.docClient

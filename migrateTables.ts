@@ -6,17 +6,11 @@ import { tagMap } from './src/tags';
 
 // this file is just to run a one time migration to get the tables into aws
 const environment = DYNAMO_ENV_NAME;
-const clipsRepo = new ClipsRepository({
-    region: 'us-east-2',
-    envName: environment,
-});
+const clipsRepo = new ClipsRepository();
 
 const db = clipsRepo.client;
 
-const tagsRepo = new TagsRepository({
-    region: 'us-east-2',
-    envName: environment,
-});
+const tagsRepo = new TagsRepository();
 const CREATE_TABLES = true;
 // dont set to true unless you want to delete the tables
 const DELETE_TABLES = false;
