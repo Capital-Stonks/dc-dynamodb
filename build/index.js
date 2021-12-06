@@ -23,4 +23,5 @@ __exportStar(require("./src/interfaces"), exports);
 __exportStar(require("./src/utils/clipEntityUtils"), exports);
 __exportStar(require("./src/utils/s3PathUtils"), exports);
 __exportStar(require("./src/utils/flattenTagsUtil"), exports);
+__exportStar(require("./createTables"), exports);
 //# sourceMappingURL=index.js.map
