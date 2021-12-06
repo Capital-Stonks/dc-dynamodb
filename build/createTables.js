@@ -9,10 +9,11 @@ const conditionallyCreateDevTables = async () => {
     const db = clipsRepo.client;
     const { TableNames: createdTables } = await db.listTables().promise();
     if (Object.keys(createdTables).length === 0) {
-        const create = await Promise.allSettled([
+        const created = await Promise.allSettled([
             db.createTable((0, schema_1.clipsTableSchema)(DEV_ENV)),
             db.createTable((0, schema_1.tagsTableSchema)(DEV_ENV)),
         ]);
+        console.log(created);
     }
 };
 exports.conditionallyCreateDevTables = conditionallyCreateDevTables;
