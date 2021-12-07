@@ -18,3 +18,5 @@ export const DYNAMO_ENV_NAME = IS_DEVELOPMENT
 export const BUCKET_NAME = IS_DEVELOPMENT ? 'dev-pepega-clips' : 'pepega-clips';
 
 export const SK_SEPARATOR = '#';
+
+export const DEFAULT_LIMIT = 50;

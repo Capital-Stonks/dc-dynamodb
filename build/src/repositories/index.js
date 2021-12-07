@@ -28,6 +28,7 @@ class Repository {
             .send(new client_dynamodb_1.QueryCommand({
             TableName: this.tableName,
             ScanIndexForward: true,
+            Limit: constants_1.DEFAULT_LIMIT,
             KeyConditionExpression: 'pk = :pk',
             FilterExpression: (0, dynamoUtils_1.objectToEqualityFilterExpression)(equalityConditions),
             ExpressionAttributeValues: (0, util_dynamodb_1.marshall)({

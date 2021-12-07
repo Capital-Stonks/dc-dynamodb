@@ -6,7 +6,7 @@ import {
 } from '@aws-sdk/client-dynamodb';
 import { marshall, unmarshall } from '@aws-sdk/util-dynamodb';
 import { Repository, Comparator } from '.';
-import { NODE_ENV } from '../constants';
+import { DEFAULT_LIMIT, NODE_ENV } from '../constants';
 import { IClip, ICustomDateFilter } from '../interfaces';
 import { preMarshallClip } from '../utils/clipEntityUtils';
 import { DateExpressionMapper, getSk } from '../utils/dynamoUtils';
@@ -117,6 +117,7 @@ export class ClipsRepository extends Repository {
             FilterExpression,
             ExpressionAttributeNames,
             ExpressionAttributeValues,
+            Limit: DEFAULT_LIMIT,
         };
         console.log('getByCustomDateQuery>', query);
         const { Items } = await this.docClient
@@ -129,6 +130,7 @@ export class ClipsRepository extends Repository {
         const query = {
             TableName: this.tableName,
             ScanIndexForward: true,
+            Limit: DEFAULT_LIMIT,
             KeyConditionExpression: 'pk = :pk',
             FilterExpression: `begins_with(s3Path, :folder)`,
             ExpressionAttributeValues: marshall({
@@ -147,6 +149,7 @@ export class ClipsRepository extends Repository {
         const query = {
             TableName: this.tableName,
             ScanIndexForward: true,
+            Limit: DEFAULT_LIMIT,
             KeyConditionExpression: 'pk = :pk',
             FilterExpression: `attribute_exists(usedInShortAtDate)`,
             ExpressionAttributeValues: marshall({

@@ -86,6 +86,7 @@ class ClipsRepository extends _1.Repository {
             FilterExpression,
             ExpressionAttributeNames,
             ExpressionAttributeValues,
+            Limit: constants_1.DEFAULT_LIMIT,
         };
         console.log('getByCustomDateQuery>', query);
         const { Items } = await this.docClient
@@ -97,6 +98,7 @@ class ClipsRepository extends _1.Repository {
         const query = {
             TableName: this.tableName,
             ScanIndexForward: true,
+            Limit: constants_1.DEFAULT_LIMIT,
             KeyConditionExpression: 'pk = :pk',
             FilterExpression: `begins_with(s3Path, :folder)`,
             ExpressionAttributeValues: (0, util_dynamodb_1.marshall)({
@@ -114,6 +116,7 @@ class ClipsRepository extends _1.Repository {
         const query = {
             TableName: this.tableName,
             ScanIndexForward: true,
+            Limit: constants_1.DEFAULT_LIMIT,
             KeyConditionExpression: 'pk = :pk',
             FilterExpression: `attribute_exists(usedInShortAtDate)`,
             ExpressionAttributeValues: (0, util_dynamodb_1.marshall)({

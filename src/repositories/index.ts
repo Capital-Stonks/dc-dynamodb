@@ -2,7 +2,7 @@ import { DynamoDB, QueryCommand } from '@aws-sdk/client-dynamodb';
 import { IDynamoConfig } from '../interfaces';
 import { translateConfig } from '../utils/translateConfig';
 import { DynamoDBDocumentClient } from '@aws-sdk/lib-dynamodb';
-import { DYNAMO_CONFIG } from '../constants';
+import { DEFAULT_LIMIT, DYNAMO_CONFIG } from '../constants';
 import { marshall, unmarshall } from '@aws-sdk/util-dynamodb';
 import { logIt } from '../utils/logItUtils';
 import {
@@ -43,6 +43,7 @@ export class Repository {
                 new QueryCommand({
                     TableName: this.tableName,
                     ScanIndexForward: true,
+                    Limit: DEFAULT_LIMIT,
                     KeyConditionExpression: 'pk = :pk',
                     FilterExpression:
                         objectToEqualityFilterExpression(equalityConditions),

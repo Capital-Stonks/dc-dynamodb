@@ -1,7 +1,6 @@
 import { IClip } from '../../src/interfaces';
 import { ClipsRepository } from '../../src/repositories/clipsRepository';
 import { clipFactory } from '../factory';
-import { IClip } from '../../src/interfaces';
 
 describe('clipsRepository', () => {
     const clip1 = clipFactory({
@@ -16,7 +15,7 @@ describe('clipsRepository', () => {
     const clipRepo = new ClipsRepository();
 
     beforeAll(async () => {
-        await clipRepo.create(clip1 as Clip);
+        await clipRepo.create(clip1 as IClip);
         await clipRepo.create(clip2 as IClip);
         await clipRepo.create(clip3 as IClip);
     });
@@ -38,7 +37,7 @@ describe('clipsRepository', () => {
     describe('getUsedInShort', () => {
         test('returns entities that have been used in a short', async () => {
             const usedInShort = await clipRepo.getUsedInShort('valorant');
-            expect(usedInShort.length).toBe(1);
+            expect(Array.isArray(usedInShort)).toBe(true);
             expect(usedInShort[0].guid).toBe(clip3.guid);
         });
     });
