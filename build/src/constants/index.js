@@ -13,5 +13,5 @@ exports.DYNAMO_ENV_NAME = exports.IS_DEVELOPMENT
     : interfaces_1.EnvName.PRODUCTION;
 exports.BUCKET_NAME = exports.IS_DEVELOPMENT ? 'dev-pepega-clips' : 'pepega-clips';
 exports.SK_SEPARATOR = '#';
-exports.DEFAULT_LIMIT = 50;
+exports.DEFAULT_LIMIT = 10000;
 //# sourceMappingURL=index.js.map

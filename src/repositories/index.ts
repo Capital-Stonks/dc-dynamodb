@@ -1,5 +1,4 @@
 import { DynamoDB, QueryCommand } from '@aws-sdk/client-dynamodb';
-import { IDynamoConfig } from '../interfaces';
 import { translateConfig } from '../utils/translateConfig';
 import { DynamoDBDocumentClient } from '@aws-sdk/lib-dynamodb';
 import { DEFAULT_LIMIT, DYNAMO_CONFIG } from '../constants';
