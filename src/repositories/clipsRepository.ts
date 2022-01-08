@@ -11,9 +11,10 @@ import { IClip, ICustomDateFilter } from '../interfaces';
 import { preMarshallClip } from '../utils/clipEntityUtils';
 import { DateExpressionMapper, getSk } from '../utils/dynamoUtils';
 import { logIt } from '../utils/logItUtils';
+import moment from 'moment';
 
 export class ClipsRepository extends Repository {
-    public static gsi = 'ratedAtDate-index';
+    public static gsi = 'pk-ratedAtDate-index';
 
     constructor() {
         super();
@@ -157,6 +158,30 @@ export class ClipsRepository extends Repository {
             }),
         };
         console.log('getUsedInShortQuery>', query);
+        const { Items } = await this.docClient.send(new QueryCommand(query));
+        return Items.map(unmarshall);
+    }
+
+    async getPreProcessShortsByDate(
+        gameName: string,
+        date: string = moment()
+            .tz('America/New_York')
+            .subtract(1, 'week')
+            .format('YYYY-MM-DD HH:mm:ss.SSS')
+    ): Promise<IClip[]> {
+        const query = {
+            TableName: this.tableName,
+            IndexName: ClipsRepository.gsi,
+            ScanIndexForward: true,
+            KeyConditionExpression: 'pk = :pk and ratedAt >= :ratedAtDate',
+            FilterExpression: 'contains(tags, :tags)',
+            ExpressionAttributeValues: marshall({
+                ':pk': gameName,
+                ':tags': 'short',
+                ':ratedAtDate': date,
+            }),
+        };
+        console.log('getPreProcessShortsByDate>', query);
         const { Items } = await this.docClient.send(new QueryCommand(query));
         return Items.map(unmarshall);
     }
