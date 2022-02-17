@@ -74,3 +74,10 @@ export interface ITags {
         [gameName: string]: string[];
     };
 }
+
+export interface IToken {
+    pk: string;
+    token: string;
+    expiration: string;
+    source: string;
+}
