@@ -1,7 +1,7 @@
 import { DynamoDB, QueryCommand } from '@aws-sdk/client-dynamodb';
 import { translateConfig } from '../utils/translateConfig';
 import { DynamoDBDocumentClient } from '@aws-sdk/lib-dynamodb';
-import { DEFAULT_LIMIT, DYNAMO_CONFIG } from '../constants';
+import { DEFAULT_LIMIT, DYNAMO_CONFIG, NODE_ENV } from '../constants';
 import { marshall, unmarshall } from '@aws-sdk/util-dynamodb';
 import { logIt } from '../utils/logItUtils';
 import {
@@ -17,6 +17,7 @@ export enum Comparator {
     lte = '<=',
     between = 'BETWEEN',
 }
+
 export class Repository {
     public docClient;
     public client;
@@ -25,7 +26,7 @@ export class Repository {
     public Comparator = Comparator;
 
     constructor() {
-        this.client = new DynamoDB(DYNAMO_CONFIG);
+        this.client = new DynamoDB(DYNAMO_CONFIG || {});
         this.docClient = DynamoDBDocumentClient.from(
             this.client,
             translateConfig

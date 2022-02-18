@@ -15,9 +15,8 @@ describe('dynamo.util', () => {
     let guid = v4();
     let gameName = 'VALORANT';
     beforeAll(async () => {
-        const dbConfig = { region: 'us-east-2', envName: EnvName.DEV };
-        clipsRepo = new ClipsRepository(dbConfig);
-        tagsRepo = new TagsRepository(dbConfig);
+        clipsRepo = new ClipsRepository();
+        tagsRepo = new TagsRepository();
     });
 
     afterEach(async () => {

@@ -4,6 +4,7 @@ import { v4 } from 'uuid';
 import moment from 'moment';
 import { clipsRepo } from '../../index';
 import * as s3Util from '../../src/utils/s3Utils';
+import { getDateNow } from '../../src/utils/dynamoUtils';
 
 const MOCK_FILE_PATH = `${__dirname}/../mocks/mock.mp4`;
 
@@ -29,18 +30,10 @@ describe('clipsDataStoreUtils', () => {
                 sourceTitle: 'Mock Entity',
                 sourceDescription: 'Mock Description',
                 rating: 7,
-                ratedAtDate: moment()
-                    .tz('America/New_York')
-                    .format('YYYY-MM-DD HH:mm:ss.SSS'),
-                usedInVideoAtDate: moment()
-                    .tz('America/New_York')
-                    .format('YYYY-MM-DD HH:mm:ss.SSS'),
-                usedInShortAtDate: moment()
-                    .tz('America/New_York')
-                    .format('YYYY-MM-DD HH:mm:ss.SSS'),
-                aggregatedAtDate: moment()
-                    .tz('America/New_York')
-                    .format('YYYY-MM-DD HH:mm:ss.SSS'),
+                ratedAtDate: getDateNow(),
+                usedInVideoAtDate: getDateNow(),
+                usedInShortAtDate: getDateNow(),
+                aggregatedAtDate: getDateNow(),
                 tags: ['flick', 'ace'],
                 duration: 100,
                 resolutionHeight: 720,
@@ -73,18 +66,10 @@ describe('clipsDataStoreUtils', () => {
             sourceTitle: 'Mock Entity',
             sourceDescription: 'Mock Description',
             rating: 7,
-            ratedAtDate: moment()
-                .tz('America/New_York')
-                .format('YYYY-MM-DD HH:mm:ss.SSS'),
-            usedInVideoAtDate: moment()
-                .tz('America/New_York')
-                .format('YYYY-MM-DD HH:mm:ss.SSS'),
-            usedInShortAtDate: moment()
-                .tz('America/New_York')
-                .format('YYYY-MM-DD HH:mm:ss.SSS'),
-            aggregatedAtDate: moment()
-                .tz('America/New_York')
-                .format('YYYY-MM-DD HH:mm:ss.SSS'),
+            ratedAtDate: getDateNow(),
+            usedInVideoAtDate: getDateNow(),
+            usedInShortAtDate: getDateNow(),
+            aggregatedAtDate: getDateNow(),
             tags: ['flick', 'ace'],
             duration: 100,
             resolutionHeight: 720,
@@ -142,18 +127,10 @@ describe('clipsDataStoreUtils', () => {
             sourceTitle: 'Mock Entity',
             sourceDescription: 'Mock Description',
             rating: 7,
-            ratedAtDate: moment()
-                .tz('America/New_York')
-                .format('YYYY-MM-DD HH:mm:ss.SSS'),
-            usedInVideoAtDate: moment()
-                .tz('America/New_York')
-                .format('YYYY-MM-DD HH:mm:ss.SSS'),
-            usedInShortAtDate: moment()
-                .tz('America/New_York')
-                .format('YYYY-MM-DD HH:mm:ss.SSS'),
-            aggregatedAtDate: moment()
-                .tz('America/New_York')
-                .format('YYYY-MM-DD HH:mm:ss.SSS'),
+            ratedAtDate: getDateNow(),
+            usedInVideoAtDate: getDateNow(),
+            usedInShortAtDate: getDateNow(),
+            aggregatedAtDate: getDateNow(),
             tags: ['flick', 'ace'],
             duration: 100,
             resolutionHeight: 720,
@@ -204,18 +181,10 @@ describe('clipsDataStoreUtils', () => {
             sourceTitle: 'Mock Entity',
             sourceDescription: 'Mock Description',
             rating: 7,
-            ratedAtDate: moment()
-                .tz('America/New_York')
-                .format('YYYY-MM-DD HH:mm:ss.SSS'),
-            usedInVideoAtDate: moment()
-                .tz('America/New_York')
-                .format('YYYY-MM-DD HH:mm:ss.SSS'),
-            usedInShortAtDate: moment()
-                .tz('America/New_York')
-                .format('YYYY-MM-DD HH:mm:ss.SSS'),
-            aggregatedAtDate: moment()
-                .tz('America/New_York')
-                .format('YYYY-MM-DD HH:mm:ss.SSS'),
+            ratedAtDate: getDateNow(),
+            usedInVideoAtDate: getDateNow(),
+            usedInShortAtDate: getDateNow(),
+            aggregatedAtDate: getDateNow(),
             tags: ['flick', 'ace'],
             duration: 100,
             resolutionHeight: 720,

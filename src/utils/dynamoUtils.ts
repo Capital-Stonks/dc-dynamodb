@@ -1,6 +1,7 @@
 import { SK_SEPARATOR } from '../constants';
 import { IColumnNameMap, ICustomDateFilter } from '../interfaces';
 import { marshall } from '@aws-sdk/util-dynamodb';
+import moment from 'moment';
 
 export const preMarshallPrep = (obj) => {
     return Object.fromEntries(
@@ -9,6 +10,10 @@ export const preMarshallPrep = (obj) => {
 };
 
 export const getSk = (gameName, guid) => `${gameName}${SK_SEPARATOR}${guid}`;
+
+export const getDateNow = () => moment()
+        .tz('America/New_York')
+        .format('YYYY-MM-DD HH:mm:ss.SSS');
 
 export const columnNameKeyValueMaps: { [key: string]: IColumnNameMap } =
     Object.freeze({

@@ -80,4 +80,5 @@ export interface IToken {
     token: string;
     expiration: string;
     source: string;
+    createdAt: string;
 }
