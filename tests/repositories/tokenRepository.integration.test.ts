@@ -11,7 +11,7 @@ describe('tokensRepo', () => {
     describe('create', () => {
         test('create token is truthy', async () => {
             const res = await tokensRepo.put({
-                state: 'teststateguid',
+                csrfState: 'teststateguid',
                 accessToken: 'testToken',
                 refreshToken: 'today',
                 expirationDate: 'tt',
@@ -23,14 +23,14 @@ describe('tokensRepo', () => {
 
     describe('get', () => {
         test('get token is truthy', async () => {
-            const res = await tokensRepo.get('test');
+            const res = await tokensRepo.get('teststateguid');
             expect(res).toBeTruthy();
         });
     });
 
     describe('delete', () => {
         test('delete token is truthy', async () => {
-            const res = await tokensRepo.delete('test');
+            const res = await tokensRepo.delete('teststateguid');
             expect(res).toBeTruthy();
         });
     });

@@ -60,6 +60,7 @@ export interface IPutTags {
     pk: string;
     tags: object;
 }
+
 export interface IGetTags {
     gameName: string;
     sk: string;
@@ -76,7 +77,7 @@ export interface ITags {
 }
 
 export interface IToken {
-    pk: string;
+    csrfState: string;
     accessToken?: string;
     refreshToken?: string;
     expirationDate?: string;

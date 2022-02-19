@@ -14,24 +14,27 @@ import { NODE_ENV } from '../constants';
 export class TokensRepository extends Repository {
     constructor() {
         super();
-        this.tableName = `${NODE_ENV}-tokens`;
+        // this.tableName = `${NODE_ENV}-tokens`;
+        this.tableName = `${'development'}-tokens`;
     }
 
+    /**
+     *
+     * @param csrfState PK and guid - gets compared for security
+     * @param accessToken Token for interacting with upload api
+     * @param refreshToken Token used to refresh the access token
+     * @param expirationDate
+     * @param source Enum UPLOAD_PLATFORMS
+     */
     async put({
-        state,
+        csrfState,
         accessToken,
         refreshToken,
         expirationDate,
         source,
-    }: {
-        state: string;
-        accessToken: string;
-        refreshToken: string;
-        expirationDate: string;
-        source: string;
-    }): Promise<Boolean> {
+    }: IToken): Promise<Boolean> {
         const preMarshalledToken = preMarshallPrep({
-            pk: state,
+            csrfState,
             accessToken,
             refreshToken,
             expirationDate,
@@ -53,9 +56,9 @@ export class TokensRepository extends Repository {
         const query = {
             TableName: this.tableName,
             ScanIndexForward: true,
-            KeyConditionExpression: 'pk = :pk',
+            KeyConditionExpression: 'csrfState = :csrfState',
             ExpressionAttributeValues: marshall({
-                ':pk': state,
+                ':csrfState': state,
             }),
         };
         console.log('getToken', query);
@@ -68,7 +71,7 @@ export class TokensRepository extends Repository {
     async delete(guid): Promise<Boolean> {
         const query = {
             TableName: this.tableName,
-            Key: marshall({ pk: guid }),
+            Key: marshall({ csrfState: guid }),
         };
         console.log('deleteQuery>', query);
         const {
