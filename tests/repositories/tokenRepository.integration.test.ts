@@ -1,4 +1,5 @@
 import { tokensRepo } from '../../index';
+
 const ORIG_ENV = { ...process.env };
 process.env.NODE_ENV = 'development';
 
@@ -9,12 +10,13 @@ afterAll(async () => {
 describe('tokensRepo', () => {
     describe('create', () => {
         test('create token is truthy', async () => {
-            const res = await tokensRepo.put(
-                'test',
-                'testToken',
-                'today',
-                'tt'
-            );
+            const res = await tokensRepo.put({
+                state: 'teststateguid',
+                accessToken: 'testToken',
+                refreshToken: 'today',
+                expirationDate: 'tt',
+                source: 'thetok',
+            });
             expect(res).toBeTruthy();
         });
     });

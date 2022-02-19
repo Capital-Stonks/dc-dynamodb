@@ -17,15 +17,23 @@ export class TokensRepository extends Repository {
         this.tableName = `${NODE_ENV}-tokens`;
     }
 
-    async put(
-        guid: string,
-        token: string,
-        expirationDate: string,
-        source: string,
-    ): Promise<Boolean> {
+    async put({
+        state,
+        accessToken,
+        refreshToken,
+        expirationDate,
+        source,
+    }: {
+        state: string;
+        accessToken: string;
+        refreshToken: string;
+        expirationDate: string;
+        source: string;
+    }): Promise<Boolean> {
         const preMarshalledToken = preMarshallPrep({
-            pk: guid,
-            token,
+            pk: state,
+            accessToken,
+            refreshToken,
             expirationDate,
             source,
             createdAt: getDateNow(),
@@ -41,13 +49,13 @@ export class TokensRepository extends Repository {
         return httpStatusCode === 200;
     }
 
-    async get(guid: string): Promise<IToken> {
+    async get(state: string): Promise<IToken> {
         const query = {
             TableName: this.tableName,
             ScanIndexForward: true,
             KeyConditionExpression: 'pk = :pk',
             ExpressionAttributeValues: marshall({
-                ':pk': guid,
+                ':pk': state,
             }),
         };
         console.log('getToken', query);
