@@ -9,7 +9,7 @@ afterAll(async () => {
 describe('tokensRepo', () => {
     describe('create', () => {
         test('create token is truthy', async () => {
-            const res = await tokensRepo.create(
+            const res = await tokensRepo.put(
                 'test',
                 'testToken',
                 'today',

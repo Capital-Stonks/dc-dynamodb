@@ -17,11 +17,11 @@ export class TokensRepository extends Repository {
         this.tableName = `${NODE_ENV}-tokens`;
     }
 
-    async create(
+    async put(
         guid: string,
         token: string,
         expirationDate: string,
-        source: string
+        source: string,
     ): Promise<Boolean> {
         const preMarshalledToken = preMarshallPrep({
             pk: guid,

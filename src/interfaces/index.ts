@@ -77,8 +77,9 @@ export interface ITags {
 
 export interface IToken {
     pk: string;
-    token: string;
-    expiration: string;
+    accessToken: string;
+    refreshToken: string;
+    expiresIn: string;
     source: string;
     createdAt: string;
 }
