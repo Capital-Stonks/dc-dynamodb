@@ -1,7 +1,6 @@
-import { IClip, ICustomDateFilter, IToken } from '../interfaces';
+import { IToken } from '../interfaces';
 import { preMarshallPrep, getDateNow } from '../utils/dynamoUtils';
 import { logIt } from '../utils/logItUtils';
-import moment from 'moment';
 import { Repository } from './index';
 import { marshall, unmarshall } from '@aws-sdk/util-dynamodb';
 import {
