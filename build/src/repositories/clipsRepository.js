@@ -1,4 +1,7 @@
 "use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.ClipsRepository = void 0;
 const client_dynamodb_1 = require("@aws-sdk/client-dynamodb");
@@ -8,10 +11,11 @@ const constants_1 = require("../constants");
 const clipEntityUtils_1 = require("../utils/clipEntityUtils");
 const dynamoUtils_1 = require("../utils/dynamoUtils");
 const logItUtils_1 = require("../utils/logItUtils");
+const moment_1 = __importDefault(require("moment"));
 class ClipsRepository extends _1.Repository {
     constructor() {
         super();
-        this.tableName = `${constants_1.NODE_ENV}-clips`;
+        this.tableName = `development-clips`;
     }
     async create(createObject) {
         const preMarshalledClip = (0, clipEntityUtils_1.preMarshallClip)(createObject, {
@@ -127,10 +131,30 @@ class ClipsRepository extends _1.Repository {
         const { Items } = await this.docClient.send(new client_dynamodb_1.QueryCommand(query));
         return Items.map(util_dynamodb_1.unmarshall);
     }
+    async getPreProcessShortsByDate(gameName, date = (0, moment_1.default)()
+        .tz('America/New_York')
+        .subtract(1, 'week')
+        .format('YYYY-MM-DD HH:mm:ss.SSS')) {
+        const query = {
+            TableName: this.tableName,
+            IndexName: ClipsRepository.gsi,
+            ScanIndexForward: true,
+            KeyConditionExpression: 'pk = :pk and ratedAt >= :ratedAtDate',
+            FilterExpression: 'contains(tags, :tags)',
+            ExpressionAttributeValues: (0, util_dynamodb_1.marshall)({
+                ':pk': gameName,
+                ':tags': 'short',
+                ':ratedAtDate': date,
+            }),
+        };
+        console.log('getPreProcessShortsByDate>', query);
+        const { Items } = await this.docClient.send(new client_dynamodb_1.QueryCommand(query));
+        return Items.map(util_dynamodb_1.unmarshall);
+    }
     async getByS3Path(gameName, s3Path) {
         return this.getByEquality(gameName, { s3Path }, true);
     }
 }
 exports.ClipsRepository = ClipsRepository;
-ClipsRepository.gsi = 'ratedAtDate-index';
+ClipsRepository.gsi = 'pk-ratedAtDate-index';
 //# sourceMappingURL=clipsRepository.js.map

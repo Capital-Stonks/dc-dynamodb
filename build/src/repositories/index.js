@@ -20,7 +20,7 @@ var Comparator;
 class Repository {
     constructor() {
         this.Comparator = Comparator;
-        this.client = new client_dynamodb_1.DynamoDB(constants_1.DYNAMO_CONFIG);
+        this.client = new client_dynamodb_1.DynamoDB(constants_1.DYNAMO_CONFIG || {});
         this.docClient = lib_dynamodb_1.DynamoDBDocumentClient.from(this.client, translateConfig_1.translateConfig);
     }
     async getByEquality(pk, equalityConditions, isReturnOne = false) {

@@ -1,14 +1,22 @@
 "use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.objectToExpressionAttributeValues = exports.objectToEqualityFilterExpression = exports.DateExpressionMapper = exports.getKeyConditionExpression = exports.getExpressionAttributeValues = exports.getExpressionAttributeNames = exports.getFilterExpression = exports.columnNameKeyValueMaps = exports.getSk = exports.preMarshallPrep = void 0;
+exports.objectToExpressionAttributeValues = exports.objectToEqualityFilterExpression = exports.DateExpressionMapper = exports.getKeyConditionExpression = exports.getExpressionAttributeValues = exports.getExpressionAttributeNames = exports.getFilterExpression = exports.columnNameKeyValueMaps = exports.getDateNow = exports.getSk = exports.preMarshallPrep = void 0;
 const constants_1 = require("../constants");
 const util_dynamodb_1 = require("@aws-sdk/util-dynamodb");
+const moment_1 = __importDefault(require("moment"));
 const preMarshallPrep = (obj) => {
     return Object.fromEntries(Object.entries(obj).filter(([_, v]) => v !== undefined));
 };
 exports.preMarshallPrep = preMarshallPrep;
 const getSk = (gameName, guid) => `${gameName}${constants_1.SK_SEPARATOR}${guid}`;
 exports.getSk = getSk;
+const getDateNow = () => (0, moment_1.default)()
+    .tz('America/New_York')
+    .format('YYYY-MM-DD HH:mm:ss.SSS');
+exports.getDateNow = getDateNow;
 exports.columnNameKeyValueMaps = Object.freeze({
     ratedAtDate: {
         Name: `ratedAtDate`,
