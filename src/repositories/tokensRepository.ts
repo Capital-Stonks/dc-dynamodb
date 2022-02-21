@@ -14,8 +14,7 @@ import { NODE_ENV } from '../constants';
 export class TokensRepository extends Repository {
     constructor() {
         super();
-        // this.tableName = `${NODE_ENV}-tokens`;
-        this.tableName = `${'development'}-tokens`;
+        this.tableName = `${NODE_ENV}-tokens`;
     }
 
     /**
