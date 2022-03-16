@@ -97,7 +97,6 @@ export class ClipsRepository extends Repository {
         minimumRating: number = 7,
         includeUsedInVideo: boolean = false,
         includeUsedInShort: boolean = false,
-        includeTags: string[] = []
     ) {
         const {
             FilterExpression,
@@ -110,8 +109,7 @@ export class ClipsRepository extends Repository {
             comparator,
             minimumRating,
             includeUsedInVideo,
-            includeUsedInShort,
-            includeTags
+            includeUsedInShort
         );
         const query = {
             TableName: this.tableName,
