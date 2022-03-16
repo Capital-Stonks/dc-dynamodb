@@ -15,7 +15,7 @@ const moment_1 = __importDefault(require("moment"));
 class ClipsRepository extends _1.Repository {
     constructor() {
         super();
-        this.tableName = `development-clips`;
+        this.tableName = `${constants_1.NODE_ENV}-clips`;
     }
     async create(createObject) {
         const preMarshalledClip = (0, clipEntityUtils_1.preMarshallClip)(createObject, {

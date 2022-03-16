@@ -18,7 +18,7 @@ export class ClipsRepository extends Repository {
 
     constructor() {
         super();
-        this.tableName = `development-clips`;
+        this.tableName = `${NODE_ENV}-clips`;
     }
 
     async create(createObject: IClip): Promise<Boolean> {
