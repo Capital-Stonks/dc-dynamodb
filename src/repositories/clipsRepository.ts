@@ -96,7 +96,7 @@ export class ClipsRepository extends Repository {
         comparator: Comparator, //todo this and filter can be combined in an obj, and rating can have its own comparator too
         minimumRating: number = 7,
         includeUsedInVideo: boolean = false,
-        includeUsedInShort: boolean = false
+        includeUsedInShort: boolean = false,
     ) {
         const {
             FilterExpression,
