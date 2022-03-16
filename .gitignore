@@ -103,6 +103,8 @@ dist
 # TernJS port file
 .tern-port
 
+.idea
+
 service-account.json
 client_secret.json
 src/tmp/clips/**
