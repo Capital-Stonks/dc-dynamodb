@@ -18,7 +18,7 @@ export class ClipsRepository extends Repository {
 
     constructor() {
         super();
-        this.tableName = `development-clips`;
+        this.tableName = `${NODE_ENV}-clips`;
     }
 
     async create(createObject: IClip): Promise<Boolean> {
@@ -96,7 +96,8 @@ export class ClipsRepository extends Repository {
         comparator: Comparator, //todo this and filter can be combined in an obj, and rating can have its own comparator too
         minimumRating: number = 7,
         includeUsedInVideo: boolean = false,
-        includeUsedInShort: boolean = false
+        includeUsedInShort: boolean = false,
+        includeTags: string[] = []
     ) {
         const {
             FilterExpression,
@@ -109,7 +110,8 @@ export class ClipsRepository extends Repository {
             comparator,
             minimumRating,
             includeUsedInVideo,
-            includeUsedInShort
+            includeUsedInShort,
+            includeTags
         );
         const query = {
             TableName: this.tableName,
