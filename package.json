@@ -12,7 +12,7 @@
         "dev-2": "serverless offline --config dev.serverless.yaml start",
         "test": "cross-env NODE_ENV=development node --inspect=0.0.0.0:9232 ./node_modules/jest/bin/jest.js --runInBand --forceExit",
         "test-integration": "cross-env NODE_ENV=development node --inspect=0.0.0.0:9232 ./node_modules/jest/bin/jest.js -c jest-integration.config.js --runInBand --forceExit",
-        "prepare": "husky install"
+        "prepare": "npm i husky --g && husky install"
     },
     "repository": {
         "type": "git",

@@ -6,6 +6,7 @@ export const clipFactory = (args = {}) => ({
     guid: v4(),
     s3Path: `some-folder/valorant/${v4()}.mp4`,
     username: 'integration-test',
+    shortsTitle: 'some-title',
     source: 'jest',
     sourceTitle: 'Mock Entity',
     sourceDescription: 'Mock Description',

@@ -15,12 +15,14 @@ export interface IGetClip {
 }
 
 export interface IClip {
+    // TODO move into microservices because its a pain in the ass to add a field.
     pk?: string;
     sk?: string;
     gameName?: string;
     guid: string;
     s3Path: string;
     createdAt: string;
+    shortsTitle?: string;
     thumbnailS3Path?: string;
     updatedAt?: string;
     username?: string;
