@@ -12,6 +12,7 @@ const clipFactory = (args = {}) => ({
     s3Path: `some-folder/valorant/${(0, uuid_1.v4)()}.mp4`,
     username: 'integration-test',
     shortsTitle: 'some-title',
+    highlightsText: 'ding',
     source: 'jest',
     sourceTitle: 'Mock Entity',
     sourceDescription: 'Mock Description',

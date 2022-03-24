@@ -23,6 +23,7 @@ export interface IClip {
     s3Path: string;
     createdAt: string;
     shortsTitle?: string;
+    highlightsText?: string;
     thumbnailS3Path?: string;
     updatedAt?: string;
     username?: string;
